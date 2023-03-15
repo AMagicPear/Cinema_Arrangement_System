@@ -70,14 +70,15 @@ void User_Register(){
     //要求用户输入ID和密码并存储
     string ID_input,password_input;
     //打开存储所有用户信息的accounts.txt文件
-    ifstream accounts("accounts.txt");
+    fstream accounts_file;
+    accounts_file.open("accounts_file.txt");
     re_register:
     cout<<"====注册===="<<endl;
     cout<<"用户名：";
     cin>>ID_input;
     //将accounts.txt文件内的用户信息存入一个对象数组中
     int member=0;
-    while (accounts>>user_list[member].ID>>user_list[member].password)
+    while (accounts_file >> user_list[member].ID >> user_list[member].password)
         member++;
     //遍历对象数组
     for (;member>0; member--) {
