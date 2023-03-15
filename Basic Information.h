@@ -114,6 +114,7 @@ public:
             cout<<endl;
         }
     }
+    //对一个影厅选座操作
     void Select_seat(int row_select,int col_select){
         seats[row_select][col_select]= true;
     }

@@ -13,7 +13,7 @@ using namespace std;
 struct User {
     string ID;                   //用户名
     string password;             //密码
-    Ticket tickets[2];
+    Ticket ticket;               //持有的票
 };
 #define USER_NUM 100
 User user_list[USER_NUM];
@@ -58,18 +58,39 @@ void User_Main(){
         User_Login();
     }
 }
+
 void Buy_Ticket(){
     //从文件中读取当前所有排片并存储在film_list中
     //可参考上面登录的写法，film_list已经在Basic Information中定义好了可以直接用
 
-
 }
 void Return_Tikcet(){
-
+    ;
 }
 //用户注册
 void User_Register(){
-    cout<<"User_Register";
+    //要求用户输入ID和密码并存储
+    string ID_input,password_input;
+    //打开存储所有用户信息的accounts.txt文件
+    ifstream accounts("accounts.txt");
+    re_register:
+    cout<<"====注册===="<<endl;
+    cout<<"用户名：";
+    cin>>ID_input;
+    cout<<"密码：";
+    cin>>password_input;
+    //将accounts.txt文件内的用户信息存入一个对象数组中
+    int member=0;
+    while (accounts>>user_list[member].ID>>user_list[member].password)
+        member++;
+    //遍历对象数组
+    for (;member>0; member--) {
+        //查找是否有输入的ID
+        if (user_list[member].ID==ID_input){
+            cout<<"用户ID已存在！请重新输入。";
+            goto re_register;
+        }
+    }
 }
 //用户登录
 void User_Login(){
