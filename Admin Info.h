@@ -5,7 +5,7 @@
 #ifndef CINEMACPP_ADMIN_INFO_H
 #define CINEMACPP_ADMIN_INFO_H
 
-#include<iostream>
+#include <iostream>
 
 using namespace std;
 struct Administrator {
@@ -13,7 +13,7 @@ struct Administrator {
     string password;
 };
 
-void menu_administrator(string ID) {
+void menu_administrator(const string& ID) {
     printf("【系统】欢迎%s！！！\n", ID.c_str());
     printf("*************************************************\n");
     printf("**********          欢迎！！！          **********\n");
