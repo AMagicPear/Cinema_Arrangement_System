@@ -38,7 +38,8 @@ int main(){
     arrangement_list[0].set(film_list[0],0,{today,0,0});
     arrangement_list[1].set(film_list[1],1,{today,1,1});
     //观众页面
-    User_Fun();
+    User_Main();
+
 }
 
 #endif
