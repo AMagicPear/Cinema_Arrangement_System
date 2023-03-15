@@ -81,6 +81,12 @@ void User_Fun(){
         Menu_user(ID_input);
     }
 }
+void Buy_Ticket(){
+    //读取当前所有排片并显示
 
+}
+void Get_Tikcet(){
+
+}
 
 #endif //CINEMACPP_AUDIENCE_INFO_H

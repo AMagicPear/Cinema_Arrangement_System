@@ -1,0 +1,3 @@
+/Users/amagicpear/Library/CloudStorage/OneDrive-njupt.edu.cn/CLionProjects/CinemaCpp/cmake-build-debug/CMakeFiles/CinemaCpp.dir
+/Users/amagicpear/Library/CloudStorage/OneDrive-njupt.edu.cn/CLionProjects/CinemaCpp/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/amagicpear/Library/CloudStorage/OneDrive-njupt.edu.cn/CLionProjects/CinemaCpp/cmake-build-debug/CMakeFiles/rebuild_cache.dir
