@@ -39,7 +39,6 @@ int main(){
     arrangement_list[1].set(film_list[1],1,{today,1,1});
     //观众页面
     User_Main();
-
 }
 
 #endif

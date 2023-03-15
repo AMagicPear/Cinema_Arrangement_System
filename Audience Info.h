@@ -72,8 +72,10 @@ void User_Register(){
     //打开存储所有用户信息的accounts.txt文件
     fstream accounts_file;
     accounts_file.open("accounts_file.txt");
-    if(!accounts_file.is_open())
-        std::cerr<<"cannot open the file";
+    if(!accounts_file.is_open()){
+        cerr<<"cannot open the accounts_file!";
+        ::exit(0);
+    }
     re_register:
     cout<<"====注册===="<<endl;
     cout<<"用户名：";
@@ -86,13 +88,16 @@ void User_Register(){
     for (;member>0; member--) {
         //查找是否有输入的ID
         if (user_list[member].ID==ID_input){
-            cout<<"用户ID已存在！请重新输入。";
+            cerr<<"用户ID已存在！请重新输入。";
             goto re_register;
         }
     }
     cout<<"密码：";
     cin>>password_input;//此处可加重复确认密码功能
-
+    //重新打开一遍账户文件
+    accounts_file.close();
+    accounts_file.open("accounts_file.txt",ios::app);//设置为向末尾追加
+    accounts_file << ID_input<<" "<< password_input<<endl;//将注册的ID和密码存入账户文件
 }
 //用户登录
 void User_Login(){
