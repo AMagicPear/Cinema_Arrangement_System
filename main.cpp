@@ -35,10 +35,14 @@ int main(){
     //测试用的排片：
     film_list[0]={"电影0","类型0",0};
     film_list[1]={"电影1","类型1",1};
-    arrangement_list[0].set(film_list[0],0,{today,0,0});
-    arrangement_list[1].set(film_list[1],1,{today,1,1});
+    Arrangement ar;
+    ar.set(film_list[0],0,{today,0,0});
+    arrangement_list.push_back(ar);
+//    arrangement_list[1].set(film_list[1],1,{today,1,1});
+//    cout<<arrangement_list[0].film.name;
     //观众页面
     User_Main();
+
 }
 
 #endif

@@ -8,6 +8,7 @@
 #include <string>
 #include <ctime>
 #include <iomanip>
+#include <vector>
 
 #define ARRANGE_NUM 10
 #define FILM_NUM 5
@@ -136,7 +137,7 @@ public:
 
 //基本信息初始化
 Film* film_list=new Film[FILM_NUM];
-auto* arrangement_list=new Arrangement[ARRANGE_NUM];
-Hall* hall_list=new Hall[3];
-
+//auto* arrangement_list=new Arrangement[ARRANGE_NUM];
+vector<Arrangement> arrangement_list;
+auto* hall_list=new Hall[HALL_NUM];
 #endif //CINEMA_BASIC_INFORMATION_H

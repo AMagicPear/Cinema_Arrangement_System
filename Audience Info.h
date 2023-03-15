@@ -7,6 +7,7 @@
 #define DEBUG
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include "Basic Information.h"
 using namespace std;
 //定义用户
@@ -15,11 +16,10 @@ struct User {
     string password;             //密码
     Ticket ticket;               //持有的票
 };
-#define USER_NUM 100
-User user_list[USER_NUM];
 void User_Login();
 void User_Register();
 bool Check_pass(const string& ID_input,const string& password_input);
+bool isID_exist(const string& ID_input);
 //打印用户菜单界面
 void Menu_user(const string &ID) {
     printf("【系统】欢迎%s！！！\n", ID.c_str());
@@ -51,6 +51,7 @@ void User_Main(){
     //进入注册分支
     if(user_Choice==1){
         User_Register();
+        User_Login();
     }
     //进入登录分支
     else if(user_Choice==2){
@@ -69,40 +70,50 @@ void Return_Tikcet(){
 void User_Register(){
     //要求用户输入ID和密码并存储
     string ID_input,password_input;
+    while (true) {
+        cout << "====注册====" << endl;
+        cout << "用户名：";
+        cin >> ID_input;
+        if (isID_exist(ID_input)) {
+            cout <<ID_input<<"已被注册，请重新输入用户名！" << endl;
+            continue;
+        }
+        break;
+    }
+    cout<<"密码：";
+    cin>>password_input;//此处可加重复确认密码功能
+    ofstream accounts_file;
+    accounts_file.open("accounts_file.txt",ios::app);//设置为向末尾追加
+    accounts_file<<ID_input<<" "<<password_input<<endl; //将注册的ID和密码存入账户文件
+    cout<<"注册成功！您的用户名是："<<ID_input<<endl;
+}
+//检查传入的ID是否已被注册，若是则返回true
+bool isID_exist(const string& ID_input){
     //打开存储所有用户信息的accounts.txt文件
     fstream accounts_file;
-    accounts_file.open("accounts_file.txt");
+    accounts_file.open("accounts_file.txt",std::ios::in);
     if(!accounts_file.is_open()){
         cerr<<"cannot open the accounts_file!";
         ::exit(0);
     }
-    re_register:
-    cout<<"====注册===="<<endl;
-    cout<<"用户名：";
-    cin>>ID_input;
-    //将accounts.txt文件内的用户信息存入一个对象数组中
-    int member=0;
-    while (accounts_file >> user_list[member].ID >> user_list[member].password)
-        member++;
-    //遍历对象数组
-    for (;member>0; member--) {
-        //查找是否有输入的ID
-        if (user_list[member].ID==ID_input){
-            cerr<<"用户ID已存在！请重新输入。";
-            goto re_register;
+    char* line= (char*) ::malloc(sizeof(char*)*100);
+    while (accounts_file.getline(line, sizeof(char*)*100)){
+        string get_name;
+        std::stringstream word(line);
+        word >> get_name;
+        if(ID_input==get_name){
+            ::free(line);
+            return true;
         }
     }
-    cout<<"密码：";
-    cin>>password_input;//此处可加重复确认密码功能
-    //重新打开一遍账户文件
-    accounts_file.close();
-    accounts_file.open("accounts_file.txt",ios::app);//设置为向末尾追加
-    accounts_file << ID_input<<" "<< password_input<<endl;//将注册的ID和密码存入账户文件
+    ::free(line);
+    return false;
 }
 //用户登录
 void User_Login(){
     //要求用户输入ID和密码并存储
     string ID_input,password_input;
+    re_login:
     cout<<"====登录===="<<endl;
     cout<<"用户名：";
     cin>>ID_input;
@@ -115,7 +126,8 @@ void User_Login(){
 #endif
     cout<<"密码：";
     cin>>password_input;
-    if (Check_pass(ID_input, password_input)) {
+    bool check_pass= Check_pass(ID_input,password_input);
+    if (check_pass) {
         Menu_user(ID_input);
         int user_Choice = ::getchar();
         switch (user_Choice) {
@@ -129,26 +141,37 @@ void User_Login(){
                 cout<<"已退出！";
                 ::exit(1);
         }
+    } else{
+        cout<<"请重新输入："<<endl;
+        goto re_login;
     }
 }
 //根据文件信息判断ID和密码是否正确
 bool Check_pass(const string& ID_input,const string& password_input){
     //打开存储所有用户信息的accounts.txt文件
-    ifstream accounts("accounts.txt");
-    //将accounts.txt文件内的用户信息存入一个对象数组中
-    int member=0;
-    while (accounts>>user_list[member].ID>>user_list[member].password)
-        member++;
-    //遍历对象数组
-    for (;member>0; member--) {
-        //查找是否有输入的ID
-        if (user_list[member].ID==ID_input){
-            //查找对应ID的密码是否正确
-            if(user_list[member].password==password_input){
-                //进入用户菜单界面
+    fstream accounts_file;
+    accounts_file.open("accounts_file.txt",std::ios::in);
+    if(!accounts_file.is_open()){
+        cerr<<"cannot open the accounts_file!";
+        ::exit(0);
+    }
+    char* line= (char*) ::malloc(sizeof(char*)*100);
+    while (accounts_file.getline(line, sizeof(char*)*100)){
+        string get_name,get_password;
+        std::stringstream word(line);
+        word >> get_name>>get_password;
+        if (ID_input == get_name) {
+            if (password_input == get_password) {
+                ::free(line);
                 return true;
-            }return false;
-        }return false;
-    }return false;
+            } else{
+                cout<<"密码错误！";
+                return false;
+            }
+        }
+    }
+    cout<<"用户名不存在！";
+    return false;
+    ::free(line);
 }
 #endif //CINEMACPP_AUDIENCE_INFO_H
