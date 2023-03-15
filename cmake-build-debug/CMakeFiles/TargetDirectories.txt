@@ -1,0 +1,3 @@
+/workspace/Cinema_Arrangement_System/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/workspace/Cinema_Arrangement_System/cmake-build-debug/CMakeFiles/edit_cache.dir
+/workspace/Cinema_Arrangement_System/cmake-build-debug/CMakeFiles/CinemaCpp.dir

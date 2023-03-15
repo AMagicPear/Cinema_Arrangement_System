@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/CinemaCpp.dir/main.cpp.o CMakeFiles/CinemaCpp.dir/Welcome.cpp.o -o CinemaCpp 
