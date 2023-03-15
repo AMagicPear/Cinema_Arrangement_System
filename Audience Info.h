@@ -44,7 +44,6 @@ int Welcome_User(){
     }
     return user_Choice;
 }
-
 //用户主函数
 void User_Main(){
     //判断注册和登录分支
@@ -58,7 +57,6 @@ void User_Main(){
         User_Login();
     }
 }
-
 void Buy_Ticket(){
     //从文件中读取当前所有排片并存储在film_list中
     //可参考上面登录的写法，film_list已经在Basic Information中定义好了可以直接用
@@ -77,8 +75,6 @@ void User_Register(){
     cout<<"====注册===="<<endl;
     cout<<"用户名：";
     cin>>ID_input;
-    cout<<"密码：";
-    cin>>password_input;
     //将accounts.txt文件内的用户信息存入一个对象数组中
     int member=0;
     while (accounts>>user_list[member].ID>>user_list[member].password)
@@ -91,6 +87,9 @@ void User_Register(){
             goto re_register;
         }
     }
+    cout<<"密码：";
+    cin>>password_input;//此处可加重复确认密码功能
+
 }
 //用户登录
 void User_Login(){
