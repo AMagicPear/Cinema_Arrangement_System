@@ -1,2 +1,11 @@
 # 项目排除路径
-/cmake-build-debug/
+/cmake-build-debug/.lightly
+.c_bin
+.classes
+logs
+*.log
+node_modules
+dist
+dist-ssr
+*.local
+.lightly
