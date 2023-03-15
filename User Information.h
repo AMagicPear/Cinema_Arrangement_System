@@ -1,0 +1,9 @@
+//
+// Created by AMagicPear on 2023/3/15.
+//
+
+#ifndef CINEMACPP_USER_INFORMATION_H
+#define CINEMACPP_USER_INFORMATION_H
+
+
+#endif //CINEMACPP_USER_INFORMATION_H
