@@ -12,6 +12,7 @@
 
 #define ARRANGE_NUM 10
 #define FILM_NUM 5
+#define HALL_NUM 3
 using namespace std;
 
 //一部电影
@@ -53,9 +54,10 @@ struct Date{
         day=day_set;
     }
     void print() const{
-        cout<<year<<"年"<<month<<"月"<<day<<"日\t";
+        cout<<year<<"年"<<month<<"月"<<day<<"日\n";
     }
 };
+
 struct Time {
     struct Date date;
     int hour;
@@ -92,6 +94,17 @@ private:
 public:
     //定义座位表，true为已被购买，false为空座
     bool seats[row][col]={}; //座位表为二维数组
+    void Show_Seats(){
+        for (auto & seat : seats) {
+            for (bool j : seat) {
+                cout<<j<<" ";
+            }
+            cout<<endl;
+        }
+    }
+    void Select_seat(int row_select,int col_select){
+        seats[row_select][col_select]= true;
+    }
 };
 
 //一个座位位置
