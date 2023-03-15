@@ -72,6 +72,8 @@ void User_Register(){
     //打开存储所有用户信息的accounts.txt文件
     fstream accounts_file;
     accounts_file.open("accounts_file.txt");
+    if(!accounts_file.is_open())
+        std::cerr<<"cannot open the file";
     re_register:
     cout<<"====注册===="<<endl;
     cout<<"用户名：";
