@@ -1,4 +1,3 @@
-
 //
 // Created by AMagicPear on 2023/3/13.
 //
@@ -13,14 +12,15 @@
 #define ARRANGE_NUM 10
 #define FILM_NUM 5
 #define HALL_NUM 3
+
 using namespace std;
 
 //一部电影
 class Film{
 public:
-    string name; //名称
-    string type; //类型
-    int time_during{}; //持续时长（分钟）
+    string name;        //名称
+    string type;        //类型
+    int time_during{};  //持续时长（分钟）
     void set(string name_set, string type_set, int time_during_set);
 };
 //设置一部电影的参数函数
@@ -74,8 +74,8 @@ struct Time {
 //一次排片
 class Arrangement{
 public:
-    Film film;  //排哪部片
-    int hall_ID{};  //在几号厅
+    Film film;          //排哪部片
+    int hall_ID{};      //在几号厅
     Time begin_time{};  //开始时间
     void set(Film film_set, int hall_ID_set, Time begin_time_set);
 };
@@ -85,6 +85,18 @@ void Arrangement::set(Film film_set, int hall_ID_set, Time begin_time_set) {
     hall_ID=hall_ID_set;
     begin_time=begin_time_set;
 }
+
+//输出当前的所有排片
+void Show_All_Arrangements(Arrangement* list){
+    cout<<"序号\t影片名称\t类型\t时长\t影厅号\t开始时间"<<endl;
+    Film film;
+    for (int i = 0; i < 2; ++i) {
+        film=list[i].film;
+        cout<<i<<"\t"<<film.name<<"\t"<<film.type<<"\t"<<film.time_during<<"\t"<<(list+i)->hall_ID<<"\t";
+        list[i].begin_time.print_accurate();
+    }
+}
+
 //影厅对象
 class Hall{
 private:
@@ -120,5 +132,10 @@ public:
     Arrangement arrangement;
     struct seat seat{};
 };
+
+//基本信息初始化
+Film* film_list=new Film[FILM_NUM];
+auto* arrangement_list=new Arrangement[ARRANGE_NUM];
+Hall* hall_list=new Hall[3];
 
 #endif //CINEMA_BASIC_INFORMATION_H

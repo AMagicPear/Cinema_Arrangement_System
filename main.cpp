@@ -25,15 +25,9 @@ int main() {
     return 0;
 }
 #else
-void Show_Arrangement(const Arrangement&);
-void Show_All_Arrangements(Arrangement*);
 #include <fstream>
 //测试用
-//初始化
-Film* film_list=new Film[FILM_NUM];
-auto* arrangement_list=new Arrangement[ARRANGE_NUM];
-Hall* hall_list=new Hall[3];
-//主函数
+//DEBUG模式的主函数
 int main(){
     //获取今日日期，存入today对象中
     Date today{};
@@ -46,14 +40,5 @@ int main(){
     //观众页面
     User_Fun();
 }
-//输出当前的所有排片
-void Show_All_Arrangements(Arrangement* list){
-    cout<<"影片名称\t类型\t时长\t影厅号\t开始时间"<<endl;
-    Film film;
-    for (int i = 0; i < 2; ++i) {
-        film=list[i].film;
-        cout<<film.name<<"\t"<<film.type<<"\t"<<film.time_during<<"\t"<<(list+i)->hall_ID<<"\t";
-        list[i].begin_time.print_accurate();
-    }
-}
+
 #endif

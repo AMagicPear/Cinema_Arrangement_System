@@ -7,13 +7,13 @@
 
 #include <iostream>
 #include <fstream>
-
+#include "Basic Information.h"
 using namespace std;
 struct User {
     string ID;                   //用户名
     string password;             //密码
 };
-
+#define USER_NUM 100
 //打印用户菜单界面
 void Menu_user(const string &ID) {
     printf("【系统】欢迎%s！！！\n", ID.c_str());
@@ -54,35 +54,37 @@ void User_Fun(){
     else if(user_Choice==2){
         //要求用户输入ID和密码并存储
         string ID_input,password_input;
-        cout<<"User_Login:\n";
+        cout<<"====登录===="<<endl;
         cout<<"用户名：";
         cin>>ID_input;
         cout<<"密码：";
         cin>>password_input;
         //打开存储所有用户信息的accounts.txt文件
-        /*ifstream accounts("accounts.txt");
-        User *user_list = nullptr;
+        ifstream accounts("accounts.txt");
+        User user_list[USER_NUM];
         //将accounts.txt文件内的用户信息存入一个对象数组中
         int member=0;
-        while (accounts>>user_list[member].ID>>user_list[member].password){
+        while (accounts>>user_list[member].ID>>user_list[member].password)
             member++;
-        }
         //遍历对象数组
-        for (int i = 0; i < member; i++) {
+        for (;member>0; member--) {
             //查找是否有输入的ID
-            if (user_list[i].ID==ID_input){
+            if (user_list[member].ID==ID_input){
                 //查找对应ID的密码是否正确
-                if(user_list[i].password==password_input){
+                if(user_list[member].password==password_input){
                     //进入用户菜单界面
                     Menu_user(ID_input);
                 }
             }
-        }*/
-        Menu_user(ID_input);
+            cout<<"用户名错误或无此用户，请检查输入的用户名";
+            //待增加功能：跳转到注册
+        }
     }
 }
 void Buy_Ticket(){
-    //读取当前所有排片并显示
+    //从文件中读取当前所有排片并存储在film_list中
+    //可参考上面登录的写法，film_list已经在Basic Information中定义好了可以直接用
+    
 
 }
 void Get_Tikcet(){
