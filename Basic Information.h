@@ -48,7 +48,6 @@ struct Date {
     int year;
     int month;
     int day;
-
     //设置Date为当前系统日期
     void set(const string &str) {
         if (str == "today") {
@@ -61,6 +60,31 @@ struct Date {
             year = 0, month = 0, day = 0;
         }
     }
+    // 定义一个重载运算符<的函数，用来比较两个Date对象的大小
+    bool operator<(const Date& d) const {
+        // 如果当前对象的年份小于d的年份，就返回true
+        if (year < d.year) {
+            return true;
+        }
+            // 如果当前对象的年份等于d的年份，就比较它们的月份
+        else if (year == d.year) {
+            // 如果当前对象的月份小于d的月份，就返回true
+            if (month < d.month) {
+                return true;
+            }
+                // 如果当前对象的月份等于d的月份，就比较它们的日期
+            else if (month == d.month) {
+                // 如果当前对象的日期小于或等于d的日期，就返回true
+                if (day <= d.day) {
+                    return true;
+                }
+            }
+        }
+
+        // 其他情况都返回false
+        return false;
+    }
+
 
     //设置Date为自定义日期
     void set(int year_set, int month_set, int day_set) {

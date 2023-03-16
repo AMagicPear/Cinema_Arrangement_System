@@ -35,8 +35,9 @@ int main(){
     //获取今日日期，存入today对象中
     Date today{};
     today.set("today");
-    write_arrangements("data/arrangements.txt");//调用write_arrangements函数，向文件"data/arrangements.txt"中写入Arrangement对象的信息
-    read_arrangements("data/arrangements.txt");//调用read_arrangements函数，从文件"data/arrangements.txt"中读取Arrangement对象的信息并显示在屏幕上
+//    write_arrangements("data/arrangements.txt");//调用write_arrangements函数，向文件"data/arrangements.txt"中写入Arrangement对象的信息
+//    read_arrangements("data/arrangements.txt");//调用read_arrangements函数，从文件"data/arrangements.txt"中读取Arrangement对象的信息并显示在屏幕上
+    create_arrangements();
     return 0;
 
 }
