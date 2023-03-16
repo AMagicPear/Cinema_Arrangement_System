@@ -14,16 +14,18 @@ using namespace std;
 //定义用户
 struct User {
     string ID;                   //用户名
-    string password;             //密码
+//    string password;             //密码
     Ticket ticket;               //持有的票
+    static int Welcome_User();
+    static void userMenu(const string& ID_input);
 };
-void User_Login();
-void User_Register();
-bool Check_pass(const string& ID_input,const string& password_input);
-bool isID_exist(const string& ID_input);
+string User_Login();
+string registerUser();
+string loginUser();
+bool isID_exist(const string&,const string&);
 //打印用户菜单界面
-void Menu_user(const string &ID) {
-    printf("【系统】欢迎%s！！！\n", ID.c_str());
+void User::userMenu(const string& ID_input) {
+    printf("【系统】欢迎%s！！！\n", ID_input.c_str());
     printf("***************************************************\n");
     printf("**********         欢迎光临！         *************\n");
     printf("**********         1-- 购票           *************\n");
@@ -32,7 +34,7 @@ void Menu_user(const string &ID) {
     printf("【系统】请您选择您要实现的功能（数字）：");
 }
 //要求用户选择注册或登录，并返回值
-int Welcome_User(){
+int User::Welcome_User(){
     cout<<"====用户===="<<endl;
     printf("1. 注册\t 2. 登录\n");
     int user_Choice=0;
@@ -46,18 +48,136 @@ int Welcome_User(){
     return user_Choice;
 }
 //用户主函数
-void User_Main(){
+void User_Main() {
+    string userID{};
+    re_choose_main:
     //判断注册和登录分支
-    int user_Choice=Welcome_User();
-    //进入注册分支
-    if(user_Choice==1){
-        User_Register();
-        User_Login();
+    int user_Choice = User::Welcome_User();
+    switch (user_Choice) {
+        case 1: //进入注册分支
+            userID = registerUser();
+        case 2: //进入登录分支
+        {
+            if(user_Choice==2) userID = loginUser();
+            User::userMenu(userID);
+            User user{};
+            user.ID=userID;
+        }
+            break;
+        default:
+            cerr<<"请输入1或2！"<<endl;
+            goto re_choose_main;
     }
-    //进入登录分支
-    else if(user_Choice==2){
-        User_Login();
+}
+// 注册函数，注册成功后调用
+string registerUser() {
+    string username; // 用户名
+    string password; // 密码
+    while (true) {
+        cout<<"====注册===="<<endl;
+        cout << "请输入用户名：";
+        cin >> username;
+        if (isID_exist(username,"data/userinfo.txt")) {
+            cout <<username<<"已被注册，请重新输入用户名！" << endl;
+            continue;
+        }
+        break;
     }
+    cout << "请输入密码：";
+    cin >> password;
+    // 打开用户信息文件
+    ofstream outfile("data/userinfo.txt", ios::app);
+    if (!outfile) {
+        cerr << "无法打开文件" << endl;
+        exit(1);
+    }
+    // 写入用户名和密码，用空格分隔
+    outfile << username << " " << password << endl;
+    // 关闭文件
+    outfile.close();
+    cout <<username<< "注册成功！" << endl;
+    return loginUser();
+}
+
+// 登录函数，返回登录成功的用户名，如果失败则返回空字符串
+string loginUser() {
+    string username; // 用户名
+    string password; // 密码
+    string line;     // 文件中的一行
+    cout<<"====登录===="<<endl;
+    cout << "请输入用户名：";
+    cin >> username;
+
+    // 打开用户信息文件
+    ifstream infile("data/userinfo.txt");
+    if (!infile) {
+        cerr << "无法打开文件" << endl;
+        exit(1);
+    }
+    // 逐行读取文件内容
+    while (getline(infile, line)) {
+        int pos = line.find(' '); // 找到空格的位置
+        if (pos == -1) continue;  // 如果没有空格则跳过该行
+
+        string user = line.substr(0, pos);   // 截取空格前面的部分作为用户名
+        string pass = line.substr(pos + 1);  // 截取空格后面的部分作为密码
+
+        if (user == username)                // 如果找到匹配的用户名，则比对密码是否正确
+        {
+            cout << "请输入密码：";
+            cin >> password;
+            if (pass == password)            // 如果密码正确，则返回该用户名，并关闭文件
+            {
+                cout << "登录成功！" << endl;
+                infile.close();
+                return user;
+            } else                             // 如果密码错误，则提示用户选择重新输入或注册，并关闭文件
+            {
+                cout << "密码错误！请选择：" << endl;
+                cout << "[1]重新输入 [2]注册账号 [3]退出程序" << endl;
+                int choice;
+                cin >> choice;
+                infile.close();
+                switch (choice) {
+                    case 1:
+                        return loginUser();
+                        break;   // 重新调用登录函数
+                    case 2:
+                        registerUser();
+                        break;       // 调用注册函数
+                    case 3:
+                        exit(0);
+                        break;              // 退出程序
+                    default:
+                        return "";
+                        break;           // 返回空字符串
+                }
+            }
+        }
+    }
+    // 如果没有找到匹配的用户名，则提示用户选择重新输入或注册，并关闭文件
+    infile.close();
+
+    cout << "用户名不存在！请选择：" << endl;
+    cout << "[1]重新输入 [2]注册账号 [3]退出程序" << endl;
+    int choice;
+    cin >> choice;
+
+    switch (choice) {
+        case 1:
+            return loginUser();
+            break;   // 重新调用登录函数
+        case 2:
+            registerUser();
+            break;       // 调用注册函数
+        case 3:
+            exit(0);
+            break;              // 退出程序
+        default:
+            return "";
+            break;           //返回空字符串
+    }
+    return "";
 }
 void Buy_Ticket(){
     //从文件中读取当前所有排片并存储在film_list中
@@ -67,32 +187,12 @@ void Buy_Ticket(){
 void Return_Tikcet(){
     ;
 }
-//用户注册
-void User_Register(){
-    //要求用户输入ID和密码并存储
-    string ID_input,password_input;
-    while (true) {
-        cout << "====注册====" << endl;
-        cout << "用户名：";
-        cin >> ID_input;
-        if (isID_exist(ID_input)) {
-            cout <<ID_input<<"已被注册，请重新输入用户名！" << endl;
-            continue;
-        }
-        break;
-    }
-    cout<<"密码：";
-    cin>>password_input;//此处可加重复确认密码功能
-    ofstream accounts_file;
-    accounts_file.open("accounts_file.txt",ios::app);//设置为向末尾追加
-    accounts_file<<ID_input<<" "<<password_input<<endl; //将注册的ID和密码存入账户文件
-    cout<<"注册成功！您的用户名是："<<ID_input<<endl;
-}
+
 //检查传入的ID是否已被注册，若是则返回true
-bool isID_exist(const string& ID_input){
+bool isID_exist(const string& ID_input,const string& filename){
     //打开存储所有用户信息的accounts.txt文件
     fstream accounts_file;
-    accounts_file.open("accounts_file.txt",std::ios::in);
+    accounts_file.open(filename,std::ios::in);
     if(!accounts_file.is_open()){
         cerr<<"cannot open the accounts_file!";
         ::exit(0);
@@ -104,75 +204,13 @@ bool isID_exist(const string& ID_input){
         word >> get_name;
         if(ID_input==get_name){
             ::free(line);
+            accounts_file.close();
             return true;
         }
     }
     ::free(line);
+    accounts_file.close();
     return false;
 }
-//用户登录
-void User_Login(){
-    //要求用户输入ID和密码并存储
-    string ID_input,password_input;
-    re_login:
-    cout<<"====登录===="<<endl;
-    cout<<"用户名：";
-    cin>>ID_input;
-#ifdef DEBUG
-    //！！调试使用：如果用户名为"1"直接跳过登录
-    if(ID_input=="1"){
-        Menu_user("AMagicPear【！调试模式！】");
-        return;
-    }
-#endif
-    cout<<"密码：";
-    cin>>password_input;
-    bool check_pass= Check_pass(ID_input,password_input);
-    if (check_pass) {
-        Menu_user(ID_input);
-        int user_Choice = ::getchar();
-        switch (user_Choice) {
-            case 1:
-                Buy_Ticket();
-                break;
-            case 2:
-                Return_Tikcet();
-                break;
-            default:
-                cout<<"已退出！";
-                ::exit(1);
-        }
-    } else{
-        cout<<"请重新输入："<<endl;
-        goto re_login;
-    }
-}
-//根据文件信息判断ID和密码是否正确
-bool Check_pass(const string& ID_input,const string& password_input){
-    //打开存储所有用户信息的accounts.txt文件
-    fstream accounts_file;
-    accounts_file.open("accounts_file.txt",std::ios::in);
-    if(!accounts_file.is_open()){
-        cerr<<"cannot open the accounts_file!";
-        ::exit(0);
-    }
-    char* line= (char*) ::malloc(sizeof(char*)*USER_NUM);
-    while (accounts_file.getline(line, sizeof(char*)*USER_NUM)){
-        string get_name,get_password;
-        std::stringstream word(line);
-        word >> get_name>>get_password;
-        if (ID_input == get_name) {
-            if (password_input == get_password) {
-                ::free(line);
-                return true;
-            } else{
-                cout<<"密码错误！";
-                return false;
-            }
-        }
-    }
-    cout<<"用户名不存在！";
-    return false;
-    ::free(line);
-}
+
 #endif //CINEMACPP_AUDIENCE_INFO_H
