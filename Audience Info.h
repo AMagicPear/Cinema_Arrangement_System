@@ -18,10 +18,10 @@ struct User {
     Ticket ticket;               //持有的票
     static int Welcome_User();
     static void userMenu(const string& ID_input);
+    static string regi();
+    static string login();
 };
-string User_Login();
-string registerUser();
-string loginUser();
+
 bool isID_exist(const string&,const string&);
 //打印用户菜单界面
 void User::userMenu(const string& ID_input) {
@@ -55,10 +55,10 @@ void User_Main() {
     int user_Choice = User::Welcome_User();
     switch (user_Choice) {
         case 1: //进入注册分支
-            userID = registerUser();
+            userID = User::regi();
         case 2: //进入登录分支
         {
-            if(user_Choice==2) userID = loginUser();
+            if(user_Choice==2) userID = User::login();
             User::userMenu(userID);
             User user{};
             user.ID=userID;
@@ -70,7 +70,7 @@ void User_Main() {
     }
 }
 // 注册函数，注册成功后调用
-string registerUser() {
+string User::regi() {
     string username; // 用户名
     string password; // 密码
     while (true) {
@@ -96,11 +96,11 @@ string registerUser() {
     // 关闭文件
     outfile.close();
     cout <<username<< "注册成功！" << endl;
-    return loginUser();
+    return login();
 }
 
 // 登录函数，返回登录成功的用户名，如果失败则返回空字符串
-string loginUser() {
+string User::login() {
     string username; // 用户名
     string password; // 密码
     string line;     // 文件中的一行
@@ -116,12 +116,9 @@ string loginUser() {
     }
     // 逐行读取文件内容
     while (getline(infile, line)) {
-        int pos = line.find(' '); // 找到空格的位置
-        if (pos == -1) continue;  // 如果没有空格则跳过该行
-
-        string user = line.substr(0, pos);   // 截取空格前面的部分作为用户名
-        string pass = line.substr(pos + 1);  // 截取空格后面的部分作为密码
-
+        std::stringstream word(line);
+        string user,pass;
+        word>>user>>pass;
         if (user == username)                // 如果找到匹配的用户名，则比对密码是否正确
         {
             cout << "请输入密码：";
@@ -140,10 +137,10 @@ string loginUser() {
                 infile.close();
                 switch (choice) {
                     case 1:
-                        return loginUser();
+                        return login();
                         break;   // 重新调用登录函数
                     case 2:
-                        registerUser();
+                        User::regi();
                         break;       // 调用注册函数
                     case 3:
                         exit(0);
@@ -165,10 +162,10 @@ string loginUser() {
 
     switch (choice) {
         case 1:
-            return loginUser();
+            return login();
             break;   // 重新调用登录函数
         case 2:
-            registerUser();
+            User::regi();
             break;       // 调用注册函数
         case 3:
             exit(0);
