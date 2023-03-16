@@ -5,6 +5,7 @@
 #ifndef CINEMACPP_AUDIENCE_INFO_H
 #define CINEMACPP_AUDIENCE_INFO_H
 #define DEBUG
+#define USER_NUM 100
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -96,8 +97,8 @@ bool isID_exist(const string& ID_input){
         cerr<<"cannot open the accounts_file!";
         ::exit(0);
     }
-    char* line= (char*) ::malloc(sizeof(char*)*100);
-    while (accounts_file.getline(line, sizeof(char*)*100)){
+    char* line= (char*) ::malloc(sizeof(char*)*USER_NUM);
+    while (accounts_file.getline(line, sizeof(char*)*USER_NUM)){
         string get_name;
         std::stringstream word(line);
         word >> get_name;
