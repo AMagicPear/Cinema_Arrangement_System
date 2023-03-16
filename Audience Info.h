@@ -156,8 +156,8 @@ bool Check_pass(const string& ID_input,const string& password_input){
         cerr<<"cannot open the accounts_file!";
         ::exit(0);
     }
-    char* line= (char*) ::malloc(sizeof(char*)*100);
-    while (accounts_file.getline(line, sizeof(char*)*100)){
+    char* line= (char*) ::malloc(sizeof(char*)*USER_NUM);
+    while (accounts_file.getline(line, sizeof(char*)*USER_NUM)){
         string get_name,get_password;
         std::stringstream word(line);
         word >> get_name>>get_password;
