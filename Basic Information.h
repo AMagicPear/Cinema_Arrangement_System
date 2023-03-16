@@ -90,7 +90,7 @@ void Arrangement::set(Film film_set, int hall_ID_set, Time begin_time_set) {
 }
 
 //输出当前的所有排片
-void Show_All_Arrangements(Arrangement* list){
+void Show_All_Arrangements(vector<Arrangement> list){
     cout<<"序号\t影片名称\t类型\t时长\t影厅号\t开始时间"<<endl;
     Film film;
     for (int i = 0; i < 2; ++i) {
@@ -140,7 +140,7 @@ public:
 
 //基本信息初始化
 Film* film_list=new Film[FILM_NUM];
-auto* arrangement_list=new Arrangement[ARRANGE_NUM]{};
-//vector<Arrangement> arrangement_list;
+//auto* arrangement_list=new Arrangement[ARRANGE_NUM]{};
+vector<Arrangement> arrangement_list;
 auto* hall_list=new Hall[HALL_NUM];
 #endif //CINEMA_BASIC_INFORMATION_H

@@ -6,7 +6,7 @@
 //
 // Created by AMagicPear on 2023/3/16.
 //
-void get_arrangements(Arrangement* ar) {
+void get_arrangements(vector<Arrangement> ar) {
     fstream arrangement_film;
     string line;
     arrangement_film.open("data/arrangement.txt");
