@@ -72,8 +72,6 @@ void User_Main() {
             user.ID=userID;
             int user_Choice_menu;
             cin>>user_Choice_menu;
-
-            Show_All_Arrangements(arrangement_list);
         }
             break;
         default:
