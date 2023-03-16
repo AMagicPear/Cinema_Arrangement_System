@@ -2,8 +2,11 @@
 //包含基本结构体信息的头文件
 #include "Basic Information.h"
 #include "Audience Info.h"
+#include "general_action.h"
 //声明外部函数：欢迎和选择界面部分，详见文件Welcome.cpp
 extern int PrintStartScreen_Choice();
+extern void get_arrangements();
+
 #define DEBUG //定义Debug模式
 #ifndef DEBUG
 //主函数
@@ -32,17 +35,9 @@ int main(){
     //获取今日日期，存入today对象中
     Date today{};
     today.set("today");
-    //测试用的排片：
-    film_list[0]={"电影0","类型0",0};
-    film_list[1]={"电影1","类型1",1};
-    Arrangement ar;
-    ar.set(film_list[0],0,{today,0,0});
-    arrangement_list.push_back(ar);
-//    arrangement_list[1].set(film_list[1],1,{today,1,1});
-//    cout<<arrangement_list[0].film.name;
-    //观众页面
-    User_Main();
-
+//    get_arrangements(arrangement_list);
+//    User_Main();
+    //
 }
 
 #endif

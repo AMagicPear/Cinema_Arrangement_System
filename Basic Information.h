@@ -9,6 +9,8 @@
 #include <ctime>
 #include <iomanip>
 #include <vector>
+#include <fstream>
+#include <iostream>
 
 #define ARRANGE_NUM 10
 #define FILM_NUM 5
@@ -93,7 +95,7 @@ void Show_All_Arrangements(Arrangement* list){
     Film film;
     for (int i = 0; i < 2; ++i) {
         film=list[i].film;
-        cout<<i<<"\t"<<film.name<<"\t"<<film.type<<"\t"<<film.time_during<<"\t"<<(list+i)->hall_ID<<"\t";
+        cout<<i<<"\t"<<film.name<<"\t"<<film.type<<"\t"<<film.time_during<<"\t"<<list[i].hall_ID<<"\t";
         list[i].begin_time.print_accurate();
     }
 }
@@ -135,9 +137,10 @@ public:
     struct seat seat{};
 };
 
+
 //基本信息初始化
 Film* film_list=new Film[FILM_NUM];
-//auto* arrangement_list=new Arrangement[ARRANGE_NUM];
-vector<Arrangement> arrangement_list;
+auto* arrangement_list=new Arrangement[ARRANGE_NUM]{};
+//vector<Arrangement> arrangement_list;
 auto* hall_list=new Hall[HALL_NUM];
 #endif //CINEMA_BASIC_INFORMATION_H

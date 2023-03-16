@@ -20,9 +20,16 @@ struct User {
     static void userMenu(const string& ID_input);
     static string regi();
     static string login();
+    void Buy_Ticket();
 };
+void User::Buy_Ticket(){
+    //从文件中读取当前所有排片并存储在film_list中
+    //可参考上面登录的写法，film_list已经在Basic Information中定义好了可以直接用
+
+}
 
 bool isID_exist(const string&,const string&);
+
 //打印用户菜单界面
 void User::userMenu(const string& ID_input) {
     printf("【系统】欢迎%s！！！\n", ID_input.c_str());
@@ -47,6 +54,7 @@ int User::Welcome_User(){
     }
     return user_Choice;
 }
+
 //用户主函数
 void User_Main() {
     string userID{};
@@ -62,6 +70,10 @@ void User_Main() {
             User::userMenu(userID);
             User user{};
             user.ID=userID;
+            int user_Choice_menu;
+            cin>>user_Choice_menu;
+
+            Show_All_Arrangements(arrangement_list);
         }
             break;
         default:
@@ -69,6 +81,7 @@ void User_Main() {
             goto re_choose_main;
     }
 }
+
 // 注册函数，注册成功后调用
 string User::regi() {
     string username; // 用户名
@@ -176,11 +189,7 @@ string User::login() {
     }
     return "";
 }
-void Buy_Ticket(){
-    //从文件中读取当前所有排片并存储在film_list中
-    //可参考上面登录的写法，film_list已经在Basic Information中定义好了可以直接用
 
-}
 void Return_Tikcet(){
     ;
 }
