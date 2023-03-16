@@ -139,7 +139,8 @@ public:
 
 
 //基本信息初始化
-Film* film_list=new Film[FILM_NUM];
+//Film* film_list=new Film[FILM_NUM];
+vector<Film> film_list;
 //auto* arrangement_list=new Arrangement[ARRANGE_NUM]{};
 vector<Arrangement> arrangement_list;
 auto* hall_list=new Hall[HALL_NUM];
