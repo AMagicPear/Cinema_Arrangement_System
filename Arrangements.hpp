@@ -95,7 +95,7 @@ void show_arrangements(vector<Arrangement> arrangements) {
     Film film;
     for (int i = 0; i < arrangements.size(); ++i) {
         film = arrangements[i].film;
-        cout << i << "\t" << film.name << "\t" << film.type << "\t" << film.time_during << "\t" << arrangements[i].hall_ID
+        cout << i+1 << "\t" << film.name << "\t" << film.type << "\t" << film.time_during << "\t" << arrangements[i].hall_ID
              << "\t";
         arrangements[i].begin_time.print_accurate();
     }

@@ -10,6 +10,7 @@
 #include <fstream>
 #include <sstream>
 #include "Basic Information.h"
+#include "halls&tickets.h"
 using namespace std;
 //定义用户
 struct User {
@@ -72,6 +73,18 @@ void User::main() {
             int user_Choice_menu;
             cin>>user_Choice_menu;
             //进入购票或退票
+            Arrangements ars(load_arrangements(arrangements_json));
+            show_arrangements(ars);
+            int choice;
+            while (true) {
+                cout << "请选择购买哪一场（输入序号）：";
+                cin >> choice;
+                if(choice<=0||choice> size(ars)){
+                    cout<<"输入序号不合法！"<<endl;
+                    continue;
+                } else break;
+            }
+            Arrangement ar_choice=ars[choice];
 
         }
             break;
