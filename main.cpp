@@ -30,16 +30,14 @@ int main() {
 #include <fstream>
 
 //DEBUG模式的主函数
+
 int main(){
     //基本信息初始化
     Date today("today");
-    const string& films_txt="data/films.txt";
-    const string& films_json="data/films.json";
-    const string& arrangements_json="data/arrangements.json";
-
-//    load_films_old(films_txt);
-
-
+    Films films= load_films(films_json);
+    show_films(films);
+    films = edit_films(films);
+    save_films(films,films_json);
     return 0;
 }
 

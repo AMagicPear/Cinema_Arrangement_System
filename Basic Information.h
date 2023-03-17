@@ -42,7 +42,7 @@ void Film::set(string name_set, string type_set, int time_during_set) {
     type = std::move(type_set);
     time_during = time_during_set;
 }
-
+typedef vector<Film> Films;
 //日期和时间格式
 struct Date {
     int year;
@@ -157,50 +157,81 @@ public:
         begin_time = begin_time_set;
     }
 };
-
 //设置一次排片的参数
 void Arrangement::set(int hall_ID_set, Film film_set, Time begin_time_set) {
     film = std::move(film_set);
     hall_ID = hall_ID_set;
     begin_time = begin_time_set;
 }
+typedef vector<Arrangement> Arrangements;
 
 //影厅对象
 class Hall {
-private:
-    //定义影厅座位的行和列数
-    const static int row = 5;
-    const static int col = 10;
 public:
-    //定义座位表，true为已被购买，false为空座
-    bool seats[row][col] = {}; //座位表为二维数组
-    void Show_Seats() {
-        for (auto &seat: seats) {
-            for (bool j: seat) {
-                cout << j << " ";
+    int rows; // 影厅座位行数
+    int cols; // 影厅座位列数
+    bool** seats; // 座位表
+
+    // 构造函数，初始化影厅座位表
+    Hall(int r, int c) : rows(r), cols(c) {
+        seats = new bool*[rows];
+        for (int i = 0; i < rows; i++) {
+            seats[i] = new bool[cols];
+            for (int j = 0; j < cols; j++) {
+                seats[i][j] = false;
             }
-            cout << endl;
         }
     }
 
-    //对一个影厅选座操作
-    void Select_seat(int row_select, int col_select) {
-        seats[row_select][col_select] = true;
+    // 析构函数，释放内存
+    ~Hall() {
+        for (int i = 0; i < rows; i++) {
+            delete[] seats[i];
+        }
+        delete[] seats;
+    }
+    void printSeats() { // 定义成员函数
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                if (seats[i][j]) { // 直接访问类的成员变量
+                    std::cout << "▣ ";
+                } else {
+                    std::cout << "□ ";
+                }
+            }
+            std::cout << "\n";
+        }
     }
 };
-
-//一个座位位置
-struct seat {
-    int row;
-    int col;
-};
+// 将影厅对象数组存储在本地文件中的函数
+void saveHallsToFile(Hall* halls[], int numHalls, std::string filename) {
+    std::ofstream file(filename);
+    if (file.is_open()) { // 如果文件打开成功
+        for (int h = 0; h < numHalls; h++) { // 遍历影厅对象数组
+            Hall* hall = halls[h];
+            file << hall->rows << "," << hall->cols;
+            for (int i = 0; i < hall->rows; i++) { // 遍历座位表，将其存储在文件中
+                for (int j = 0; j < hall->cols; j++) {
+                    file << "," << hall->seats[i][j];
+                }
+            }
+            file << "\n";
+        }
+        file.close(); // 关闭文件
+    } else {
+        std::cout << "Unable to open file";
+    }
+}
 
 //一张票
 class Ticket {
 public:
     int ID{};
     Arrangement arrangement;
-    struct seat seat{};
+    struct seat {
+        int row;
+        int col;
+    };
 };
 
 //基本信息初始化
@@ -209,4 +240,7 @@ public:
 //auto* arrangement_list=new Arrangement[ARRANGE_NUM]{};
 //vector<Arrangement> arrangement_list;
 //auto *hall_list = new Hall[HALL_NUM];
+#define films_txt "data/films.txt"
+#define films_json "data/films.json"
+#define arrangements_json "data/arrangements.json"
 #endif //CINEMA_BASIC_INFORMATION_H

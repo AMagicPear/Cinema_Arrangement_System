@@ -16,9 +16,9 @@ struct User {
     string ID;                   //用户名
 //    string password;             //密码
     Ticket ticket;               //持有的票
-    static int Welcome_User();
+    static int welcome();
     static void main();
-    static void userMenu(const string& ID_input);
+    static void menu(const string& ID_input);
     static string regi();
     static string login();
     void Buy_Ticket();
@@ -30,7 +30,7 @@ void User::Buy_Ticket(){
 bool isID_exist(const string&,const string&);
 
 //打印用户菜单界面
-void User::userMenu(const string& ID_input) {
+void User::menu(const string& ID_input) {
     printf("【系统】欢迎%s！！！\n", ID_input.c_str());
     printf("***************************************************\n");
     printf("**********         欢迎光临！         *************\n");
@@ -40,7 +40,7 @@ void User::userMenu(const string& ID_input) {
     printf("【系统】请您选择您要实现的功能（数字）：");
 }
 //要求用户选择注册或登录，并返回值
-int User::Welcome_User(){
+int User::welcome(){
     cout<<"====用户===="<<endl;
     printf("1. 注册\t 2. 登录\n");
     int user_Choice=0;
@@ -59,14 +59,14 @@ void User::main() {
     string userID{};
     re_choose_main:
     //判断注册和登录分支
-    int user_Choice = User::Welcome_User();
+    int user_Choice = User::welcome();
     switch (user_Choice) {
         case 1: //进入注册分支
             userID = User::regi();
         case 2: //进入登录分支
         {
             if(user_Choice==2) userID = User::login();
-            User::userMenu(userID);
+            User::menu(userID);
             User user{};
             user.ID=userID;
             int user_Choice_menu;
