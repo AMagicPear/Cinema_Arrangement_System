@@ -43,6 +43,7 @@ void Film::set(string name_set, string type_set, int time_during_set) {
     time_during = time_during_set;
 }
 typedef vector<Film> Films;
+
 //日期和时间格式
 struct Date {
     int year;
@@ -119,7 +120,6 @@ struct Date {
         }
     }
 };
-
 struct Time {
     struct Date date;
     int hour;
@@ -165,62 +165,95 @@ void Arrangement::set(int hall_ID_set, Film film_set, Time begin_time_set) {
 }
 typedef vector<Arrangement> Arrangements;
 
-//影厅对象
-class Hall {
-public:
-    int rows; // 影厅座位行数
-    int cols; // 影厅座位列数
-    bool** seats; // 座位表
+// 定义Hall类型为bool类型的二维vector
+typedef vector<vector<bool>> Hall;
+typedef vector<vector<vector<bool>>> Halls;
+// 定义一个打印Hall座位表的成员函数
+void print_hall(const Hall& hall) {
+    // 遍历每一行
+    for (const auto& row : hall) {
+        // 遍历每一列
+        for (const auto& seat : row) {
+            // 如果座位为true，打印'▣'
+            if (seat) {
+                cout << "▣";
+            }
+                // 否则，打印'□'
+            else {
+                cout << "□";
+            }
+        }
+        // 换行
+        cout << "\n";
+    }
+}
 
-    // 构造函数，初始化影厅座位表
-    Hall(int r, int c) : rows(r), cols(c) {
-        seats = new bool*[rows];
-        for (int i = 0; i < rows; i++) {
-            seats[i] = new bool[cols];
-            for (int j = 0; j < cols; j++) {
-                seats[i][j] = false;
+// 定义一个把vector<Hall>存入本地文件的函数
+void save_halls(const vector<Hall>& halls, const string& filename) {
+    // 打开文件，使用二进制模式和输出模式
+    ofstream file(filename, ios::binary | ios::out);
+    // 如果文件打开失败，抛出异常
+    if (!file.is_open()) {
+        throw runtime_error("Failed to open file");
+    }
+    // 遍历每个Hall对象
+    for (const auto& hall : halls) {
+        // 获取Hall对象的行数和列数
+        size_t rows = hall.size();
+        size_t cols = hall.empty() ? 0 : hall[0].size();
+        // 写入行数和列数到文件中，使用sizeof运算符获取字节数
+        file.write(reinterpret_cast<const char*>(&rows), sizeof(rows));
+        file.write(reinterpret_cast<const char*>(&cols), sizeof(cols));
+        // 遍历每一行
+        for (const auto& row : hall) {
+            // 创建一个char数组，大小为cols * sizeof(bool)
+            char buffer[cols * sizeof(bool)];
+            // 使用std::copy把每一行的数据复制到char数组中
+            std::copy(row.begin(), row.end(), buffer);
+            // 写入char数组到文件中
+            file.write(buffer, cols * sizeof(bool));
+        }
+    }
+    // 关闭文件
+    file.close();
+}
+// 定义一个读取本地文件并返回vector<Hall>的函数
+vector<Hall> load_halls(const string& filename) {
+    // 创建一个空的vector<Hall>对象
+    vector<Hall> halls;
+    // 打开文件，使用二进制模式和输入模式
+    ifstream file(filename, ios::binary | ios::in);
+    // 如果文件打开失败，抛出异常
+    if (!file.is_open()) {
+        throw runtime_error("Failed to open file");
+    }
+    // 循环读取文件直到结束
+    while (!file.eof()) {
+        // 创建一个空的Hall对象
+        Hall hall;
+        // 声明两个变量用来存储行数和列数
+        size_t rows, cols;
+        // 尝试从文件中读取行数和列数，如果失败或者没有数据，则跳出循环
+        if (!file.read(reinterpret_cast<char*>(&rows), sizeof(rows)) ||
+            !file.read(reinterpret_cast<char*>(&cols), sizeof(cols))) {
+            break;
+        }
+        // 调整Hall对象的大小为rows x cols，并初始化为false
+        hall.resize(rows, vector<bool>(cols, false));
+        // 遍历每一行
+        for (auto& row : hall) {
+            // 创建一个char数组，大小为cols * sizeof(bool)
+            char buffer[cols * sizeof(bool)];
+            // 尝试从文件中读取char数组，如果失败，则跳出循环
+            if (!file.read(buffer, cols * sizeof(bool))) {
+                break;
             }
+            // 使用std::copy把char数组复制到每一行中
+            std::copy(buffer, buffer + cols * sizeof(bool), row.begin());
         }
+        halls.push_back(hall);
     }
-
-    // 析构函数，释放内存
-    ~Hall() {
-        for (int i = 0; i < rows; i++) {
-            delete[] seats[i];
-        }
-        delete[] seats;
-    }
-    void printSeats() { // 定义成员函数
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                if (seats[i][j]) { // 直接访问类的成员变量
-                    std::cout << "▣ ";
-                } else {
-                    std::cout << "□ ";
-                }
-            }
-            std::cout << "\n";
-        }
-    }
-};
-// 将影厅对象数组存储在本地文件中的函数
-void saveHallsToFile(Hall* halls[], int numHalls, std::string filename) {
-    std::ofstream file(filename);
-    if (file.is_open()) { // 如果文件打开成功
-        for (int h = 0; h < numHalls; h++) { // 遍历影厅对象数组
-            Hall* hall = halls[h];
-            file << hall->rows << "," << hall->cols;
-            for (int i = 0; i < hall->rows; i++) { // 遍历座位表，将其存储在文件中
-                for (int j = 0; j < hall->cols; j++) {
-                    file << "," << hall->seats[i][j];
-                }
-            }
-            file << "\n";
-        }
-        file.close(); // 关闭文件
-    } else {
-        std::cout << "Unable to open file";
-    }
+    return halls;
 }
 
 //一张票
@@ -239,8 +272,9 @@ public:
 //vector<Film> film_list;
 //auto* arrangement_list=new Arrangement[ARRANGE_NUM]{};
 //vector<Arrangement> arrangement_list;
-//auto *hall_list = new Hall[HALL_NUM];
+
 #define films_txt "data/films.txt"
 #define films_json "data/films.json"
 #define arrangements_json "data/arrangements.json"
+
 #endif //CINEMA_BASIC_INFORMATION_H

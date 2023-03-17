@@ -32,12 +32,11 @@ int main() {
 //DEBUG模式的主函数
 
 int main(){
-    //基本信息初始化
-    Date today("today");
-    Films films= load_films(films_json);
-    show_films(films);
-    films = edit_films(films);
-    save_films(films,films_json);
+    Halls halls;
+    Hall hall1={{1,0,1,0,0,1,1,1,0},
+                {0,0}};
+    print_hall(hall1);
+
     return 0;
 }
 
