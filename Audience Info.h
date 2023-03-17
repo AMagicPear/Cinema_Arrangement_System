@@ -4,7 +4,7 @@
 
 #ifndef CINEMACPP_AUDIENCE_INFO_H
 #define CINEMACPP_AUDIENCE_INFO_H
-#define DEBUG
+//#define DEBUG
 #define USER_NUM 100
 #include <iostream>
 #include <fstream>
@@ -17,14 +17,13 @@ struct User {
 //    string password;             //密码
     Ticket ticket;               //持有的票
     static int Welcome_User();
+    static void main();
     static void userMenu(const string& ID_input);
     static string regi();
     static string login();
     void Buy_Ticket();
 };
 void User::Buy_Ticket(){
-    //从文件中读取当前所有排片并存储在film_list中
-    //可参考上面登录的写法，film_list已经在Basic Information中定义好了可以直接用
 
 }
 
@@ -56,7 +55,7 @@ int User::Welcome_User(){
 }
 
 //用户主函数
-void User_Main() {
+void User::main() {
     string userID{};
     re_choose_main:
     //判断注册和登录分支
@@ -72,6 +71,8 @@ void User_Main() {
             user.ID=userID;
             int user_Choice_menu;
             cin>>user_Choice_menu;
+            //进入购票或退票
+
         }
             break;
         default:
