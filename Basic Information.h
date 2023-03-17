@@ -146,35 +146,43 @@ struct Time {
 //一次排片
 class Arrangement {
 public:
-    int hall_ID{};      //在几号厅
+//    int hall_ID{};
+    Hall hall;          //该场排片的影厅
     Film film;          //排哪部片
     Time begin_time{};  //开始时间
     void set(int hall_ID_set, Film film_set, Time begin_time_set);
 
     //构造函数
-    Arrangement(int hall_set = 0, Film film_set = Film(), Time begin_time_set = Time()) {
-        hall_ID = hall_set;
+    Arrangement(int hall_ID_set = 0, Film film_set = Film(), Time begin_time_set = Time()) {
+        hall = hall_default[hall_ID_set - 1];
         film = film_set;
         begin_time = begin_time_set;
     }
-private:
-    Hall_seats hall;
 };
 //设置一次排片的参数
 void Arrangement::set(int hall_ID_set, Film film_set, Time begin_time_set) {
     film = std::move(film_set);
-    hall_ID = hall_ID_set;
+    hall = hall_default[hall_ID_set];
     begin_time = begin_time_set;
 }
 typedef vector<Arrangement> Arrangements;
+//座位的行和列结构
+struct SeatLocation{
+    unsigned int row;
+    unsigned int col;
+};
 //一张票
 class Ticket {
 public:
-    Arrangement arrangement;
-    struct seat {
-        int row;
-        int col;
-    };
+    Film film;
+    Time begin_time;
+    SeatLocation seatLocation{};
+    Ticket(Arrangement& ar_set,SeatLocation seat_set){
+        ar_set.hall.seats[seat_set.row][seat_set.col]=false;
+        film=ar_set.film;
+        begin_time=ar_set.begin_time;
+        seatLocation=seat_set;
+    }
 };
 
 //基本信息初始化

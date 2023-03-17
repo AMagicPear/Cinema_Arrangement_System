@@ -19,7 +19,7 @@ void save_arrangements(const vector<Arrangement>& arrangements,const string& fil
     json j;
     for (const auto& a : arrangements) {
         j.push_back({
-                            {"hall_ID", a.hall_ID},
+                            {"hall_ID", a.hall.ID},
                             {"film", {
                                                 {"name", a.film.name},
                                                 {"type", a.film.type},
@@ -95,7 +95,7 @@ void show_arrangements(vector<Arrangement> arrangements) {
     Film film;
     for (int i = 0; i < arrangements.size(); ++i) {
         film = arrangements[i].film;
-        cout << i+1 << "\t" << film.name << "\t" << film.type << "\t" << film.time_during << "\t" << arrangements[i].hall_ID
+        cout << i+1 << "\t" << film.name << "\t" << film.type << "\t" << film.time_during << "\t" << arrangements[i].hall.ID
              << "\t";
         arrangements[i].begin_time.print_accurate();
     }

@@ -13,21 +13,47 @@
 #include "halls&tickets.h"
 using namespace std;
 //定义用户
-struct User {
-    string ID;                   //用户名
+class User {
+public:
+    string ID;                     //用户名
 //    string password;             //密码
-    Ticket ticket;               //持有的票
+    vector<Ticket> tickets;        //持有的票
     static int welcome();
     static void main();
     static void menu(const string& ID_input);
     static string regi();
     static string login();
     void Buy_Ticket();
+    void Return_Ticket();
+    void Show_Ticket();
 };
 void User::Buy_Ticket(){
+    Arrangements ars(load_arrangements(arrangements_json));
+    show_arrangements(ars);
+    int choice;
+    while (true) {
+        cout << "请选择购买哪一场（输入序号）：";
+        cin >> choice;
+        if (choice <= 0 || choice > size(ars)) {
+            cout << "输入序号不合法！" << endl;
+            continue;
+        } else break;
+    }
+    Arrangement ar_choice = ars[choice];
+    unsigned int row,col;
+    print_hall_seats(ar_choice.hall.seats);
+    cout<<"选择座位（行 列）：";
+    cin>>row>>col;
+    row--,col--;
+    Ticket ticket(ar_choice,{row,col});
+    tickets.push_back(ticket);
+}
+void User::Return_Ticket() {
 
 }
+void User::Show_Ticket() {
 
+}
 bool isID_exist(const string&,const string&);
 
 //打印用户菜单界面
@@ -60,34 +86,26 @@ void User::main() {
     string userID{};
     re_choose_main:
     //判断注册和登录分支
-    int user_Choice = User::welcome();
+    int user_Choice = welcome();
     switch (user_Choice) {
         case 1: //进入注册分支
-            userID = User::regi();
+            userID = regi();
         case 2: //进入登录分支
         {
-            if(user_Choice==2) userID = User::login();
+            if(user_Choice==2) userID = login();
             User::menu(userID);
-            User user{};
+            User user;
             user.ID=userID;
             int user_Choice_menu;
             cin>>user_Choice_menu;
-            //进入购票或退票
-            Arrangements ars(load_arrangements(arrangements_json));
-            show_arrangements(ars);
-            int choice;
-            while (true) {
-                cout << "请选择购买哪一场（输入序号）：";
-                cin >> choice;
-                if(choice<=0||choice> size(ars)){
-                    cout<<"输入序号不合法！"<<endl;
-                    continue;
-                } else break;
-            }
-            Arrangement ar_choice=ars[choice];
 
-        }
+            //进入购票
+            if(user_Choice_menu==1)
+                Buy_Ticket();
+            else if(user_Choice_menu==2)
+                Return_Ticket();
             break;
+        }
         default:
             cerr<<"请输入1或2！"<<endl;
             goto re_choose_main;
