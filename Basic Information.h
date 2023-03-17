@@ -13,9 +13,10 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include "nlohmann/json.hpp"
 
-#define ARRANGE_NUM 10
-#define FILM_NUM 5
+//#define ARRANGE_NUM 10
+//#define FILM_NUM 5
 #define HALL_NUM 3
 
 using namespace std;
@@ -29,13 +30,12 @@ public:
     void set(string name_set, string type_set, int time_during_set);
 
     //构造函数
-    Film(string n = "", string t = "", int td = 0) {
-        name = n;
-        type = t;
-        time_during = td;
+    Film(string name_set = "", string type_set = "", int time_during_set = 0) {
+        name = name_set;
+        type = type_set;
+        time_during = time_during_set;
     }
 };
-
 //设置一部电影的参数函数
 void Film::set(string name_set, string type_set, int time_during_set) {
     name = std::move(name_set);
@@ -60,7 +60,7 @@ struct Date {
             year = 0, month = 0, day = 0;
         }
     }
-    // 定义一个重载运算符<的函数，用来比较两个Date对象的大小
+    //定义一个重载运算符<的函数，用来比较两个Date对象的大小
     bool operator<(const Date& d) const {
         // 如果当前对象的年份小于d的年份，就返回true
         if (year < d.year) {
@@ -80,9 +80,13 @@ struct Date {
                 }
             }
         }
-
         // 其他情况都返回false
         return false;
+    }
+    //定义一个重载运算符==的函数，用来判断两个Date对象是否相等
+    bool operator==(const Date& d) const{
+        if(year==d.year&&month==d.month&&day==d.day) return true;
+        else return false;
     }
 
 
@@ -94,7 +98,7 @@ struct Date {
     }
 
     void print() const {
-        cout << year << "年" << month << "月" << day << "日\n";
+        cout << year << "/" << month << "/" << day << endl;
     }
 
     //构造函数
@@ -136,10 +140,10 @@ public:
     void set(int hall_ID_set, Film film_set, Time begin_time_set);
 
     //构造函数
-    Arrangement(int id = 0, Film f = Film(), Time time = Time()) {
-        hall_ID = id;
-        film = f;
-        begin_time = time;
+    Arrangement(int hall_set = 0, Film film_set = Film(), Time begin_time_set = Time()) {
+        hall_ID = hall_set;
+        film = film_set;
+        begin_time = begin_time_set;
     }
 };
 
@@ -149,20 +153,6 @@ void Arrangement::set(int hall_ID_set, Film film_set, Time begin_time_set) {
     hall_ID = hall_ID_set;
     begin_time = begin_time_set;
 }
-
-
-
-////输出当前的所有排片
-//void Show_All_Arrangements(vector<Arrangement> list) {
-//    cout << "序号\t影片名称\t类型\t时长\t影厅号\t开始时间" << endl;
-//    Film film;
-//    for (int i = 0; i < 2; ++i) {
-//        film = list[i].film;
-//        cout << i << "\t" << film.name << "\t" << film.type << "\t" << film.time_during << "\t" << list[i].hall_ID
-//             << "\t";
-//        list[i].begin_time.print_accurate();
-//    }
-//}
 
 //影厅对象
 class Hall {
