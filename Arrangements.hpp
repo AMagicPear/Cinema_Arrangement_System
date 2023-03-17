@@ -40,26 +40,49 @@ void save_arrangements(const vector<Arrangement>& arrangements,const string& fil
     file << j.dump(4);
 }
 
+//保存vector<Film>中的电影数据到文件
+void save_films(const vector<Film> &films, const string &file_dst) {
+    ofstream fin(file_dst);
+    json j;
+    for (const auto &i: films) {
+        j.push_back({
+                            {"film", {
+                                    {"name", i.name},
+                                    {"type", i.type},
+                                    {"time_during", i.time_during}
+                            }}
+                    });
+    }
+    fin<<j.dump(4);
+}
+
 //从arrangements.json内读取arrangements的信息并return
 vector<Arrangement> load_arrangements(const string& file_dst) {
     vector<Arrangement> arrangements;
     ifstream file(file_dst);
-    json j;
-    file >> j;
-    for (const auto& item : j) {
-        Arrangement a;
-        a.hall_ID = item["hall_ID"];
-        a.film.name = item["film"]["name"];
-        a.film.type = item["film"]["type"];
-        a.film.time_during = item["film"]["time_during"];
-        a.begin_time.date.year = item["begin_time"]["date"]["year"];
-        a.begin_time.date.month = item["begin_time"]["date"]["month"];
-        a.begin_time.date.day = item["begin_time"]["date"]["day"];
-        a.begin_time.hour = item["begin_time"]["hour"];
-        a.begin_time.minute = item["begin_time"]["minute"];
-        arrangements.push_back(a);
+    json json;
+    file >> json;
+    for (const auto& i : json) {
+        Film film(i["film"]["name"], i["film"]["type"], i["film"]["time_during"]);
+        Date date(i["begin_time"]["date"]["year"], i["begin_time"]["date"]["month"], i["begin_time"]["date"]["day"]);
+        Time begin_time(date,i["begin_time"]["hour"],i["begin_time"]["minute"]);
+        Arrangement arrangement(i["hall_ID"],film,begin_time);
+        arrangements.push_back(arrangement);
     }
     return arrangements;
+}
+
+//从films.json内读取films的信息并return给vector
+vector<Film> load_films(const string& file_dst){
+    vector<Film> films;
+    ifstream file(file_dst);
+    json json;
+    file >> json;
+    for(const auto& i:json){
+        Film film(i["name"],i["type"],i["time_during"]);
+        films.push_back(film);
+    }
+    return films;
 }
 
 //输出一个vector<Arrangement>内的所有排片
@@ -75,7 +98,7 @@ void show_arrangements(vector<Arrangement> arrangements) {
 }
 
 //从films.txt内读取films的信息并return给vector
-vector<Film> load_films(const string& file_dst){
+vector<Film> load_films_old(const string& file_dst){
     vector<Film> films;
     //打开目标文件
     ifstream fin(file_dst);
@@ -105,6 +128,8 @@ void show_films(vector<Film> films){
         cout << i + 1 << ". " << films[i].name << " " << films[i].type << " " << films[i].time_during << endl;
     }
 }
+
+//要求用户输入电影数据并保存
 
 //传入vector<Film>要求用户排片并return最后的排片
 vector<Arrangement> creat_arrangements(vector<Film> films){

@@ -107,6 +107,17 @@ struct Date {
         month = m;
         day = d;
     }
+    Date(const string &str) {
+        if (str == "today") {
+            time_t now = time(nullptr);
+            tm *ltm = localtime(&now);
+            year = 1900 + ltm->tm_year;
+            month = 1 + ltm->tm_mon;
+            day = ltm->tm_mday;
+        } else {
+            year = 0, month = 0, day = 0;
+        }
+    }
 };
 
 struct Time {
@@ -191,7 +202,6 @@ public:
     Arrangement arrangement;
     struct seat seat{};
 };
-
 
 //基本信息初始化
 //Film* film_list=new Film[FILM_NUM];

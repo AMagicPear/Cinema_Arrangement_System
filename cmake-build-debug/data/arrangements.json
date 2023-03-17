@@ -1,0 +1,36 @@
+[
+    {
+        "begin_time": {
+            "date": {
+                "day": 17,
+                "month": 3,
+                "year": 2023
+            },
+            "hour": 8,
+            "minute": 10
+        },
+        "film": {
+            "name": "Deep",
+            "time_during": 100,
+            "type": "sci"
+        },
+        "hall_ID": 10
+    },
+    {
+        "begin_time": {
+            "date": {
+                "day": 17,
+                "month": 3,
+                "year": 2023
+            },
+            "hour": 10,
+            "minute": 0
+        },
+        "film": {
+            "name": "Deep",
+            "time_during": 100,
+            "type": "sci"
+        },
+        "hall_ID": 1
+    }
+]
