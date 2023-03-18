@@ -2,16 +2,11 @@
 // Created by AMagicPear on 2023/3/15.
 //
 
-#ifndef CINEMACPP_AUDIENCE_INFO_H
-#define CINEMACPP_AUDIENCE_INFO_H
+#ifndef CINEMACPP_AUDIENCE_INFO_HPP
+#define CINEMACPP_AUDIENCE_INFO_HPP
 //#define DEBUG
 #define USER_NUM 100
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include "Basic Information.h"
-#include "halls&tickets.h"
-using namespace std;
+#include "Basic Information.hpp"
 //定义用户
 class User {
 public:
@@ -101,9 +96,9 @@ void User::main() {
 
             //进入购票
             if(user_Choice_menu==1)
-                Buy_Ticket();
+                user.Buy_Ticket();
             else if(user_Choice_menu==2)
-                Return_Ticket();
+                user.Return_Ticket();
             break;
         }
         default:
@@ -249,4 +244,4 @@ bool isID_exist(const string& ID_input,const string& filename){
     return false;
 }
 
-#endif //CINEMACPP_AUDIENCE_INFO_H
+#endif //CINEMACPP_AUDIENCE_INFO_HPP

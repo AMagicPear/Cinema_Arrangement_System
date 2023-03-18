@@ -9,7 +9,7 @@ int PrintStartScreen_Choice(){
     printf("欢迎!");
     printf("请选择您的身份：1. 观众\t 2. 管理员\n");
     int user_Choice=0;
-    while (true) {
+    while (1) {
         scanf("%d",&user_Choice);
         if(!(user_Choice==1||user_Choice==2)){
             printf("输入有误！请输入1或2以选择：");

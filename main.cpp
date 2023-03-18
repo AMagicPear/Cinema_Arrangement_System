@@ -1,13 +1,10 @@
-#include <iostream>
 //包含基本结构体信息的头文件
-#include "Arrangements.hpp"
-#include "Basic Information.h"
-#include "Audience Info.h"
-#include "Admin Info.h"
-#include "halls&tickets.h"
-//声明外部函数：欢迎和选择界面部分，详见文件Welcome.cpp
-extern int PrintStartScreen_Choice();
-#define DEBUG //定义Debug模式
+#include "Basic Information.hpp"
+#include "Audience Info.hpp"
+#include "Admin Info.hpp"
+//声明外部函数：欢迎和选择界面部分，详见文件Welcome.c
+extern "C" int PrintStartScreen_Choice();
+//#define DEBUG //定义Debug模式
 #ifndef DEBUG
 //主函数
 int main() {
@@ -31,20 +28,7 @@ int main() {
 //DEBUG模式的主函数
 
 int main(){
-//    Halls halls;
-//    Hall_seats hall1= create_hall(4,4);
-//    hall1[2][3]=true;
-//    print_hall_seats(hall1);
-//    halls.push_back(hall1);
-//    save_halls(halls,"data/halls.dat");
-//    halls= load_halls("data/halls.dat");
-//    print_hall_seats(halls[0]);
-    Arrangements ars(load_arrangements(arrangements_json));
-    show_arrangements(ars);
-    int choice;
-
-    cout<<"请选择购买哪一场（输入序号）：";
-    cin>>choice;
+//    show_arrangements(load_arrangements(arrangements_json));
 
     return 0;
 }

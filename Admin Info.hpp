@@ -2,13 +2,9 @@
 // Created by AMagicPear on 2023/3/15.
 //
 //管理员界面
-#ifndef CINEMACPP_ADMIN_INFO_H
-#define CINEMACPP_ADMIN_INFO_H
-
-#include <iostream>
-#include <fstream>
-#include <string>
-#include "Arrangements.hpp"
+#ifndef CINEMACPP_ADMIN_INFO_HPP
+#define CINEMACPP_ADMIN_INFO_HPP
+#include "Basic Information.hpp"
 
 //定义管理员密码
 const std::string admin_password = "ampc";
@@ -211,4 +207,4 @@ public:
     }
 };
 
-#endif //CINEMACPP_ADMIN_INFO_H
+#endif //CINEMACPP_ADMIN_INFO_HPP

@@ -52,9 +52,9 @@ build CMakeFiles/CinemaCpp.dir/main.cpp.o: CXX_COMPILER__CinemaCpp_Debug /Users/
   OBJECT_DIR = CMakeFiles/CinemaCpp.dir
   OBJECT_FILE_DIR = CMakeFiles/CinemaCpp.dir
 
-build CMakeFiles/CinemaCpp.dir/Welcome.cpp.o: CXX_COMPILER__CinemaCpp_Debug /Users/amagicpear/Library/CloudStorage/OneDrive-njupt.edu.cn/CLionProjects/CinemaCpp/Welcome.cpp || cmake_object_order_depends_target_CinemaCpp
-  DEP_FILE = CMakeFiles/CinemaCpp.dir/Welcome.cpp.o.d
-  FLAGS = -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.1.sdk -fcolor-diagnostics -std=gnu++17
+build CMakeFiles/CinemaCpp.dir/Welcome.c.o: C_COMPILER__CinemaCpp_Debug /Users/amagicpear/Library/CloudStorage/OneDrive-njupt.edu.cn/CLionProjects/CinemaCpp/Welcome.c || cmake_object_order_depends_target_CinemaCpp
+  DEP_FILE = CMakeFiles/CinemaCpp.dir/Welcome.c.o.d
+  FLAGS = -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.1.sdk -fcolor-diagnostics
   OBJECT_DIR = CMakeFiles/CinemaCpp.dir
   OBJECT_FILE_DIR = CMakeFiles/CinemaCpp.dir
 
@@ -66,7 +66,7 @@ build CMakeFiles/CinemaCpp.dir/Welcome.cpp.o: CXX_COMPILER__CinemaCpp_Debug /Use
 #############################################
 # Link the executable CinemaCpp
 
-build CinemaCpp: CXX_EXECUTABLE_LINKER__CinemaCpp_Debug CMakeFiles/CinemaCpp.dir/main.cpp.o CMakeFiles/CinemaCpp.dir/Welcome.cpp.o
+build CinemaCpp: CXX_EXECUTABLE_LINKER__CinemaCpp_Debug CMakeFiles/CinemaCpp.dir/main.cpp.o CMakeFiles/CinemaCpp.dir/Welcome.c.o
   FLAGS = -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.1.sdk
   OBJECT_DIR = CMakeFiles/CinemaCpp.dir
   POST_BUILD = :
