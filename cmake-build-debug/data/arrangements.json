@@ -1,36 +1,56 @@
 [
     {
+        "No": 0,
         "begin_time": {
             "date": {
-                "day": 17,
+                "day": 16,
                 "month": 3,
                 "year": 2023
             },
             "hour": 8,
-            "minute": 10
+            "minute": 34
         },
         "film": {
-            "name": "Deep",
-            "time_during": 100,
-            "type": "sci"
+            "name": "流浪地球",
+            "time_during": 120,
+            "type": "科幻"
         },
-        "hall_ID": 10
+        "hall_ID": 1
     },
     {
+        "No": 1,
         "begin_time": {
             "date": {
-                "day": 17,
+                "day": 15,
                 "month": 3,
                 "year": 2023
             },
-            "hour": 10,
-            "minute": 0
+            "hour": 23,
+            "minute": 14
         },
         "film": {
-            "name": "Deep",
-            "time_during": 100,
-            "type": "sci"
+            "name": "假如给我一天黑暗",
+            "time_during": 90,
+            "type": "魔法"
         },
         "hall_ID": 1
+    },
+    {
+        "No": 2,
+        "begin_time": {
+            "date": {
+                "day": 1,
+                "month": 4,
+                "year": 2023
+            },
+            "hour": 4,
+            "minute": 33
+        },
+        "film": {
+            "name": "我不是药神",
+            "time_during": 30,
+            "type": "纪录片"
+        },
+        "hall_ID": 2
     }
 ]

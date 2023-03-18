@@ -35,7 +35,7 @@ using namespace std;
 // 定义Hall类型为bool类型的二维vector表示座位表
 typedef vector<vector<bool>> Seats;
 // 定义一个打印Hall座位表的函数
-void print_hall_seats(const Seats& hall) {
+void show_seats(const Seats& hall) {
     // 遍历每一行
     for (const auto& row : hall) {
         // 遍历每一列
@@ -52,6 +52,7 @@ void print_hall_seats(const Seats& hall) {
         // 换行
         cout << "\n";
     }
+    cout<<"----------"<<endl;
 }
 //定义一个影厅对象
 class Hall{
@@ -59,18 +60,18 @@ public:
     int ID;
     Seats seats;
     void print_seats() const{
-        print_hall_seats(seats);
+        show_seats(seats);
     }
 };
 
-// 定义一个函数，形参为int row, int col
+// 影厅座位表构造函数
 Seats create_hall(int row, int col) {
     // 使用std::vector的构造函数，创建一个row行col列的全部初始化为false的Hall对象
     Seats hall(row, vector<bool>(col, false));
     // 返回Hall对象
     return hall;
 }
-//定义默认的两个影厅对象
+//定义预制的影厅对象
 Hall hall_default[2]={{1, create_hall(4,5)},
                       {2, create_hall(5,5)}};
 //一部电影
@@ -224,21 +225,31 @@ class Ticket {
 public:
     Film film;
     Time begin_time;
+    int Hall_ID;
     SeatLocation seatLocation{};
+    //传入排片来购票，同时会修改排片的座位表
     Ticket(Arrangement& ar_set,SeatLocation seat_set){
         ar_set.hall.seats[seat_set.row][seat_set.col]=false;
         film=ar_set.film;
         begin_time=ar_set.begin_time;
         seatLocation=seat_set;
+        Hall_ID=ar_set.hall.ID;
+    }
+    //直接定义一张票的内容
+    Ticket(Film film_set,Time begin_time_set,int hall_set,SeatLocation seat_set){
+        film=film_set;
+        begin_time=begin_time_set;
+        Hall_ID=hall_set;
+        seatLocation=seat_set;
     }
 };
 
 //保存座位表到文件
-void save_seats(const Seats& vvb, const std::string& file_path){
+void save_seats(const Seats& seats, const std::string& file_path){
     // 打开一个二进制文件
     std::ofstream outfile(file_path, std::ios::out | std::ios::binary);
     // 遍历每个子向量
-    for (const auto& vb : vvb){
+    for (const auto& vb : seats){
         // 把子向量的大小写入文件
         size_t size = vb.size();
         outfile.write(reinterpret_cast<const char*>(&size), sizeof(size));
@@ -254,7 +265,7 @@ void save_seats(const Seats& vvb, const std::string& file_path){
 //从文件读取座位表
 Seats load_seats(const std::string& file_path){
     // 创建一个空的vector<vector<bool>>对象
-    std::vector<std::vector<bool>> vvb;
+    std::vector<std::vector<bool>> seats;
     // 打开一个二进制文件
     std::ifstream infile(file_path, std::ios::in | std::ios::binary);
     // 判断文件是否打开成功
@@ -277,14 +288,16 @@ Seats load_seats(const std::string& file_path){
                     vb.push_back(b);
                 }
                 // 把子向量添加到对象中
-                vvb.push_back(vb);
+                seats.push_back(vb);
             }
         }
         // 关闭文件
         infile.close();
+    }else{
+        cerr<<"无法打开座位表！"<<endl;
     }
     // 返回对象
-    return vvb;
+    return seats;
 }
 
 //向arrangements.json内保存arrangements的信息
@@ -319,16 +332,16 @@ void save_halls(const Arrangements &arrangements,const std::string& folder_path)
     //遍历所有的排片
     for (int i = 0; i < size(arrangements); ++i) {
         //获取当前排片的座位表
-        const Seats& vvb = arrangements[i].hall.seats;
+        const Seats& seats = arrangements[i].hall.seats;
         //构造文件名，使用对象的序号作为文件名
         std::string file_path=folder_path+"/"+std::to_string(i)+".bin";
-        save_seats(vvb,file_path);
+        save_seats(seats, file_path);
     }
 }
 //同时执行上面两个函数
 void save_arrangements(const Arrangements &arrangements){
     save_arrangements_json(arrangements,arrangements_json);
-    save_halls(arrangements,"/data/halls");
+    save_halls(arrangements,seats_folder);
     cout<<"已保存排片数据！"<<endl;
 }
 
@@ -367,8 +380,7 @@ Arrangements load_arrangements(const string& file_dst,const std::string& folder_
     //从二进制文件内读取各个排片的座位表信息
     for (int i = 0; i < size(arrangements); ++i) {
         string file_path=folder_path+"/"+ to_string(i)+".bin";
-        Seats seats= load_seats(file_path);
-        arrangements[i].hall.seats=seats;
+        arrangements[i].hall.seats= load_seats(file_path);
     }
     return arrangements;
 }
@@ -388,6 +400,7 @@ Films load_films(const string& file_dst){
 
 //输出一个vector<Arrangement>内的所有排片
 void show_arrangements(Arrangements arrangements) {
+    cout<<"以下是现有的排片数据："<<endl;
     cout << "序号\t影片名称\t类型\t时长\t影厅号\t开始时间" << endl;
     Film film;
     for (int i = 0; i < arrangements.size(); ++i) {
@@ -396,6 +409,7 @@ void show_arrangements(Arrangements arrangements) {
              << "\t";
         arrangements[i].begin_time.print_accurate();
     }
+    cout<<"---------"<<endl;
 }
 
 //从films.txt内读取films的信息并return给vector
@@ -431,7 +445,7 @@ void show_films(Films films){
     cout<<"------------"<<endl;
 }
 
-//为避免信息定位困难，排片的排序仅在输出时进行！文件内容不变！
+/*//为避免信息定位困难，排片的排序仅在输出时进行！文件内容不变！
 // 定义一个函数，用来比较两个Arrangement对象的begin_time先后
 bool compare_begin_time(const Arrangement& a1, const Arrangement& a2) {
     // 如果a1的begin_time的日期早于a2的begin_time的日期，就返回true
@@ -460,7 +474,7 @@ bool compare_begin_time(const Arrangement& a1, const Arrangement& a2) {
 void sort_arrangements(Arrangements& arrangements) {
     // 使用algorithm库中提供sort函数，并传入自定义compare_begin_tim函数作为比较规则来对vector进行排序
     sort(arrangements.begin(), arrangements.end(), compare_begin_time);
-}
+}*/
 
 
 #endif //CINEMA_BASIC_INFORMATION_H

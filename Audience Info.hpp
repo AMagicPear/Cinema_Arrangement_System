@@ -25,7 +25,6 @@ public:
 //保存用户购票
 void save_user(User user) {
     json j;
-    string file_path = ((string) user_folder) + "/" + user.ID + ".json";
     for (int i = 0; i < size(user.tickets); ++i) {
         j.push_back({{"film", {
                 {"name", user.tickets[i].film.name},
@@ -39,16 +38,43 @@ void save_user(User user) {
                 }},
                 {"hour", user.tickets[i].begin_time.hour},
                 {"minute", user.tickets[i].begin_time.minute}}
-                     },{"seatLocation",{
+                },{"hall_ID",user.tickets[i].Hall_ID},{"seatLocation",{
                          {"row",user.tickets[i].seatLocation.row},
                          {"col",user.tickets[i].seatLocation.col}
                      }
-
         }});
     }
-    ofstream file(file_path);
+    ofstream file((string) (((string) user_folder) + "/" + user.ID + ".json"));
     file<<j.dump(4);
     file.close();
+}
+//读取用户的票并return
+vector<Ticket> load_user(User& user){
+    vector<Ticket> tickets;
+    ifstream file((string) (((string) user_folder) + "/" + user.ID + ".json"));
+    if(!file){
+//        cerr<<"无法加载此用户！";
+        return {};
+    }
+    json json;
+    file>>json;
+    for (const auto& i:json) {
+        Film film(i["film"]["name"], i["film"]["type"], i["film"]["time_during"]);
+        Date date(i["begin_time"]["date"]["year"], i["begin_time"]["date"]["month"], i["begin_time"]["date"]["day"]);
+        Time begin_time(date,i["begin_time"]["hour"],i["begin_time"]["minute"]);
+        SeatLocation seatLocation({i["seatLocation"]["row"],i["seatLocation"]["col"]});
+        Ticket ticket(film,begin_time,i["hall_ID"],seatLocation);
+        tickets.push_back(ticket);
+    }
+    file.close();
+    user.tickets=tickets;
+    return tickets;
+}
+//输出一张票的信息
+void show_ticket(const Ticket& ticket){
+    cout <<"电影信息："<< ticket.film.name << " " << ticket.film.type << " " << ticket.film.time_during<<"min"<< endl;
+    cout<<"影厅号："<<ticket.Hall_ID<<endl;
+    cout<<"座位位置："<<ticket.seatLocation.row+1<<"行"<<ticket.seatLocation.col+1<<"列"<<endl;
 }
 //用户购票
 void User::Buy_Ticket(){
@@ -63,33 +89,38 @@ void User::Buy_Ticket(){
             continue;
         } else break;
     }
-    Arrangement ar_choice = arrangements[choice];
     SeatLocation seatLocation{};
-    print_hall_seats(ar_choice.hall.seats);
+    show_seats(arrangements[choice].hall.seats);
     cout<<"选择座位（行 列）：";
     cin>>seatLocation.row>>seatLocation.col;
-    seatLocation.row--,seatLocation.col--;
-    Ticket ticket(ar_choice,seatLocation);
+    arrangements[choice].hall.seats[seatLocation.row-1][seatLocation.col-1]=true;
+    Ticket ticket(arrangements[choice],seatLocation);
     tickets.push_back(ticket);
+    save_arrangements(arrangements);
     save_user(*this);
+    cout<<"购票完成！"<<endl;
 }
+//退票
 void User::Return_Ticket() {
-
+    Show_Ticket();
+    cout<<"【退票界面】敬请期待"<<endl;
 }
+//看票
 void User::Show_Ticket() {
-
+    cout<<ID<<"拥有的票有："<<endl;
+    for (int i=0;i< size(tickets);++i){
+        cout<<"票["<<i<<"]："<<endl;
+        show_ticket(tickets[i]);
+        cout<<"-----------"<<endl;
+    }
 }
+
 bool isID_exist(const string&,const string&);
 
 //打印用户菜单界面
 void User::menu(const string& ID_input) {
-    printf("【系统】欢迎%s！！！\n", ID_input.c_str());
-    printf("***************************************************\n");
-    printf("**********         欢迎光临！         *************\n");
-    printf("**********         1-- 购票           *************\n");
-    printf("**********         2-- 退票           *************\n");
-    printf("**********         0-- 退出           *************\n");
-    printf("【系统】请您选择您要实现的功能（数字）：");
+    printf("欢迎%s！！！\n", ID_input.c_str());
+    cout<<"[1]购票 [2]查票 [3]退票 [0]退出：";
 }
 //要求用户选择注册或登录，并返回值
 int User::welcome(){
@@ -118,17 +149,33 @@ void User::main() {
         case 2: //进入登录分支
         {
             if(user_Choice==2) userID = login();
-            User::menu(userID);
+            //初始化用户信息
             User user;
             user.ID=userID;
+            load_user(user);
+            //进入菜单
+            menu:
+            User::menu(userID);
             int user_Choice_menu;
             cin>>user_Choice_menu;
-
             //进入购票
-            if(user_Choice_menu==1)
+            if(user_Choice_menu==1){
                 user.Buy_Ticket();
-            else if(user_Choice_menu==2)
+                goto menu;
+            }
+            else if(user_Choice_menu==2){
+                user.Show_Ticket();
+                goto menu;
+            }
+            //进入退票
+            else if(user_Choice_menu==3){
                 user.Return_Ticket();
+                goto menu;
+            }
+            else if(user_Choice_menu==0){
+                cout<<"欢迎下次使用！"<<endl;
+                ::exit(2);
+            }
             else break;
         }
         default:

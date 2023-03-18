@@ -10,6 +10,7 @@ extern "C" int PrintStartScreen_Choice();
 int main() {
     //确定两个大分支中选择哪一个
     int user_Choice = PrintStartScreen_Choice();
+    restart:
     switch (user_Choice) {
         case 1:
             //进入观众大分支
@@ -17,10 +18,12 @@ int main() {
             break;
         case 2:
             //进入管理员大分支
+            Admin::check();
             Admin::main();
             break;
         default:
-            printf("Error!");
+            printf("请输入1或2：");
+            goto restart;
     }
     return 0;
 }
@@ -28,9 +31,7 @@ int main() {
 //DEBUG模式的主函数
 
 int main(){
-//    show_arrangements(load_arrangements(arrangements_json));
-
-    return 0;
+    show_seats(load_seats("data/halls/2.bin"));
 }
 
 #endif
