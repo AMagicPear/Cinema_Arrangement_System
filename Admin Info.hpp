@@ -170,8 +170,8 @@ public:
     }
 
     static void main() {
-        vector<Film> films = load_films("data/films.txt");
-        vector<Arrangement> arrangements = load_arrangements("data/arrangements.json");
+        vector<Film> films = load_films(films_json);
+        vector<Arrangement> arrangements = load_arrangements(arrangements_json,seats_folder);
         int choice{};
         re_start:
         cout << "【欢迎来到影院管理员界面】\n[1]查看&编辑当前所有电影数据" << endl

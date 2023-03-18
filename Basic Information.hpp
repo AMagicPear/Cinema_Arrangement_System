@@ -28,11 +28,14 @@ using json = nlohmann::json;
 #define films_txt "data/films.txt"
 #define films_json "data/films.json"
 #define arrangements_json "data/arrangements.json"
+#define seats_folder "data/halls"
+#define user_folder "data/users"
+#define user_info "data/users/userinfo.txt"
 using namespace std;
 // 定义Hall类型为bool类型的二维vector表示座位表
-typedef vector<vector<bool>> Hall_seats;
+typedef vector<vector<bool>> Seats;
 // 定义一个打印Hall座位表的函数
-void print_hall_seats(const Hall_seats& hall) {
+void print_hall_seats(const Seats& hall) {
     // 遍历每一行
     for (const auto& row : hall) {
         // 遍历每一列
@@ -54,16 +57,16 @@ void print_hall_seats(const Hall_seats& hall) {
 class Hall{
 public:
     int ID;
-    Hall_seats seats;
+    Seats seats;
     void print_seats() const{
         print_hall_seats(seats);
     }
 };
 
 // 定义一个函数，形参为int row, int col
-Hall_seats create_hall(int row, int col) {
+Seats create_hall(int row, int col) {
     // 使用std::vector的构造函数，创建一个row行col列的全部初始化为false的Hall对象
-    Hall_seats hall(row, vector<bool>(col, false));
+    Seats hall(row, vector<bool>(col, false));
     // 返回Hall对象
     return hall;
 }
@@ -231,13 +234,11 @@ public:
 };
 
 //保存座位表到文件
-void save_seats(const Hall_seats& vvb, const std::string& file_path)
-{
+void save_seats(const Seats& vvb, const std::string& file_path){
     // 打开一个二进制文件
     std::ofstream outfile(file_path, std::ios::out | std::ios::binary);
     // 遍历每个子向量
-    for (const auto& vb : vvb)
-    {
+    for (const auto& vb : vvb){
         // 把子向量的大小写入文件
         size_t size = vb.size();
         outfile.write(reinterpret_cast<const char*>(&size), sizeof(size));
@@ -251,29 +252,24 @@ void save_seats(const Hall_seats& vvb, const std::string& file_path)
     outfile.close();
 }
 //从文件读取座位表
-Hall_seats load_seats(const std::string& file_path)
-{
+Seats load_seats(const std::string& file_path){
     // 创建一个空的vector<vector<bool>>对象
     std::vector<std::vector<bool>> vvb;
     // 打开一个二进制文件
     std::ifstream infile(file_path, std::ios::in | std::ios::binary);
     // 判断文件是否打开成功
-    if (infile.is_open())
-    {
+    if (infile.is_open()){
         // 读取文件直到结束
-        while (!infile.eof())
-        {
+        while (!infile.eof()){
             // 读取子向量的大小
             size_t size = 0;
             infile.read(reinterpret_cast<char*>(&size), sizeof(size));
             // 判断是否读取成功
-            if (infile.gcount() == sizeof(size))
-            {
+            if (infile.gcount() == sizeof(size)){
                 // 创建一个空的子向量
                 std::vector<bool> vb;
                 // 遍历每个bool元素
-                for (size_t i = 0; i < size; i++)
-                {
+                for (size_t i = 0; i < size; i++){
                     // 读取bool元素的值
                     bool b = false;
                     infile.read(reinterpret_cast<char*>(&b), sizeof(bool));
@@ -323,7 +319,7 @@ void save_halls(const Arrangements &arrangements,const std::string& folder_path)
     //遍历所有的排片
     for (int i = 0; i < size(arrangements); ++i) {
         //获取当前排片的座位表
-        const Hall_seats& vvb = arrangements[i].hall.seats;
+        const Seats& vvb = arrangements[i].hall.seats;
         //构造文件名，使用对象的序号作为文件名
         std::string file_path=folder_path+"/"+std::to_string(i)+".bin";
         save_seats(vvb,file_path);
@@ -353,9 +349,10 @@ void save_films(const Films &films, const string &file_dst) {
     fin.close();
 }
 
-//从arrangements.json和halls内读取arrangements的信息并return
-Arrangements load_arrangements(const string& file_dst) {
+//从arrangements.json和hall文件夹内读取排片的信息并return
+Arrangements load_arrangements(const string& file_dst,const std::string& folder_path) {
     vector<Arrangement> arrangements;
+    //从json中读取管理员排片的基本信息
     ifstream file(file_dst);
     json json;
     file >> json;
@@ -367,9 +364,14 @@ Arrangements load_arrangements(const string& file_dst) {
         arrangements.push_back(arrangement);
     }
     file.close();
+    //从二进制文件内读取各个排片的座位表信息
+    for (int i = 0; i < size(arrangements); ++i) {
+        string file_path=folder_path+"/"+ to_string(i)+".bin";
+        Seats seats= load_seats(file_path);
+        arrangements[i].hall.seats=seats;
+    }
     return arrangements;
 }
-
 //从films.json内读取films的信息并return给vector
 Films load_films(const string& file_dst){
     vector<Film> films;
@@ -385,7 +387,7 @@ Films load_films(const string& file_dst){
 }
 
 //输出一个vector<Arrangement>内的所有排片
-void show_arrangements(vector<Arrangement> arrangements) {
+void show_arrangements(Arrangements arrangements) {
     cout << "序号\t影片名称\t类型\t时长\t影厅号\t开始时间" << endl;
     Film film;
     for (int i = 0; i < arrangements.size(); ++i) {

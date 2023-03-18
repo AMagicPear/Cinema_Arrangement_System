@@ -22,26 +22,56 @@ public:
     void Return_Ticket();
     void Show_Ticket();
 };
+//保存用户购票
+void save_user(User user) {
+    json j;
+    string file_path = ((string) user_folder) + "/" + user.ID + ".json";
+    for (int i = 0; i < size(user.tickets); ++i) {
+        j.push_back({{"film", {
+                {"name", user.tickets[i].film.name},
+                {"type", user.tickets[i].film.type},
+                {"time_during", user.tickets[i].film.time_during}
+        }}, {"begin_time", {
+                {"date", {
+                        {"year", user.tickets[i].begin_time.date.year},
+                        {"month", user.tickets[i].begin_time.date.month},
+                        {"day", user.tickets[i].begin_time.date.day}
+                }},
+                {"hour", user.tickets[i].begin_time.hour},
+                {"minute", user.tickets[i].begin_time.minute}}
+                     },{"seatLocation",{
+                         {"row",user.tickets[i].seatLocation.row},
+                         {"col",user.tickets[i].seatLocation.col}
+                     }
+
+        }});
+    }
+    ofstream file(file_path);
+    file<<j.dump(4);
+    file.close();
+}
+//用户购票
 void User::Buy_Ticket(){
-    Arrangements ars(load_arrangements(arrangements_json));
-    show_arrangements(ars);
+    Arrangements arrangements(load_arrangements(arrangements_json,seats_folder));
+    show_arrangements(arrangements);
     int choice;
     while (true) {
         cout << "请选择购买哪一场（输入序号）：";
         cin >> choice;
-        if (choice <= 0 || choice > size(ars)) {
+        if (choice < 0 || choice >= size(arrangements)) {
             cout << "输入序号不合法！" << endl;
             continue;
         } else break;
     }
-    Arrangement ar_choice = ars[choice];
-    unsigned int row,col;
+    Arrangement ar_choice = arrangements[choice];
+    SeatLocation seatLocation{};
     print_hall_seats(ar_choice.hall.seats);
     cout<<"选择座位（行 列）：";
-    cin>>row>>col;
-    row--,col--;
-    Ticket ticket(ar_choice,{row,col});
+    cin>>seatLocation.row>>seatLocation.col;
+    seatLocation.row--,seatLocation.col--;
+    Ticket ticket(ar_choice,seatLocation);
     tickets.push_back(ticket);
+    save_user(*this);
 }
 void User::Return_Ticket() {
 
@@ -99,7 +129,7 @@ void User::main() {
                 user.Buy_Ticket();
             else if(user_Choice_menu==2)
                 user.Return_Ticket();
-            break;
+            else break;
         }
         default:
             cerr<<"请输入1或2！"<<endl;
@@ -107,7 +137,7 @@ void User::main() {
     }
 }
 
-// 注册函数，注册成功后调用
+// 注册函数，返回注册成功的用户名
 string User::regi() {
     string username; // 用户名
     string password; // 密码
@@ -115,7 +145,7 @@ string User::regi() {
         cout<<"====注册===="<<endl;
         cout << "请输入用户名：";
         cin >> username;
-        if (isID_exist(username,"data/userinfo.txt")) {
+        if (isID_exist(username,user_info)) {
             cout <<username<<"已被注册，请重新输入用户名！" << endl;
             continue;
         }
@@ -124,7 +154,7 @@ string User::regi() {
     cout << "请输入密码：";
     cin >> password;
     // 打开用户信息文件
-    ofstream outfile("data/userinfo.txt", ios::app);
+    ofstream outfile(user_info, ios::app);
     if (!outfile) {
         cerr << "无法打开文件" << endl;
         exit(1);
@@ -134,7 +164,7 @@ string User::regi() {
     // 关闭文件
     outfile.close();
     cout <<username<< "注册成功！" << endl;
-    return login();
+    return username;
 }
 
 // 登录函数，返回登录成功的用户名，如果失败则返回空字符串
@@ -147,7 +177,7 @@ string User::login() {
     cin >> username;
 
     // 打开用户信息文件
-    ifstream infile("data/userinfo.txt");
+    ifstream infile(user_info);
     if (!infile) {
         cerr << "无法打开文件" << endl;
         exit(1);
@@ -215,9 +245,6 @@ string User::login() {
     return "";
 }
 
-void Return_Tikcet(){
-    ;
-}
 
 //检查传入的ID是否已被注册，若是则返回true
 bool isID_exist(const string& ID_input,const string& filename){
