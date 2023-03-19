@@ -3,15 +3,15 @@
 #include "Audience Info.hpp"
 #include "Admin Info.hpp"
 //声明外部函数：欢迎和选择界面部分，详见文件Welcome.c
-extern "C" int PrintStartScreen_Choice();
+extern int main_menu();
 //#define DEBUG //定义Debug模式
 #ifndef DEBUG
 //主函数
 int main() {
     //确定两个大分支中选择哪一个
-    int user_Choice = PrintStartScreen_Choice();
     restart:
-    switch (user_Choice) {
+    int user_choice = main_menu();
+    switch (user_choice) {
         case 1:
             //进入观众大分支
             User::main();
@@ -21,8 +21,10 @@ int main() {
             Admin::check();
             Admin::main();
             break;
+        case 0:
+            exit(1);
         default:
-            printf("请输入1或2：");
+            printf("请输入1-3：");
             goto restart;
     }
     return 0;
@@ -31,7 +33,9 @@ int main() {
 //DEBUG模式的主函数
 
 int main(){
-    Date date1(2023,3,26);
+//    Date date1(2023,3,26);
+//    main_menu();
+    show_arrangements(load_arrangements(arrangements_json,seats_folder));
 }
 
 #endif

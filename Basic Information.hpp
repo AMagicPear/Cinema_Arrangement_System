@@ -36,6 +36,7 @@ using namespace std;
 typedef vector<vector<bool>> Seats;
 // 定义一个打印Hall座位表的函数
 void show_seats(const Seats& hall) {
+    cout<<"----------"<<endl;
     // 遍历每一行
     for (const auto& row : hall) {
         // 遍历每一列
@@ -153,7 +154,7 @@ struct Date {
     }
 
     void print() const {
-        cout << year << "/" << month << "/" << day << endl;
+        cout << year << "/" <<setw(2)<<setiosflags(ios::right)<<setfill('0')<< month << "/" <<setw(2)<<setfill('0')<< day;
     }
 
     //构造函数
@@ -180,7 +181,7 @@ struct Time {
     int minute;
     //以"时:分"格式输出，时分均为两位数字
     void print_accurate() const {
-        cout << setw(2) << setfill('0') << hour << ":" << setw(2) << setfill('0') << minute << endl;
+        cout << setw(2) << setfill('0') << hour << ":" << setw(2) << setfill('0') << minute;
     }
     //输出日期
     void print_date() const {
@@ -402,16 +403,37 @@ Films load_films(const string& file_dst){
 
 //输出一个vector<Arrangement>内的所有排片
 void show_arrangements(Arrangements arrangements) {
-    cout<<"以下是现有的排片数据："<<endl;
-    cout << "序号\t影片名称\t类型\t时长\t影厅号\t开始时间" << endl;
+    cout << " ====================================================================================== " << endl;
+    cout <<setfill(' ')<< setw(7)<<setiosflags(ios::left)<<"|序号"
+    <<setw(27) << "|       影片名称"
+    <<setw(9)<<"| 类型"
+    <<setw(9)<<"| 时长"
+    <<setw(17)<<"|  放映日期" //2023/01/23
+    <<setw(15)<<"| 放映时间"
+    <<setw(9)<<"| 影厅"<<"|"<<endl; //todo 可增加余票显示
     Film film;
-    for (int i = 0; i < arrangements.size(); ++i) {
-        film = arrangements[i].film;
-        cout << i << "\t" << film.name << "\t" << film.type << "\t" << film.time_during << "\t" << arrangements[i].hall.ID
-             << "\t";
-        arrangements[i].begin_time.print_accurate();
+    cout<< setiosflags(ios::right);
+    for(int i=0;i<arrangements.size();++i){
+        cout <<setfill(' ')
+        << "|  "<<i<<" "
+                <<"|"<<setw(25)<<arrangements[i].film.name
+             <<"| "<<arrangements[i].film.type<<" "
+             <<"| "<<setw(3)<<arrangements[i].film.time_during<<" "
+             <<"| "; arrangements[i].begin_time.print_date(); cout<<" "
+             <<"|  "; arrangements[i].begin_time.print_accurate();cout<<"  ";
+             cout<<"|  "<<arrangements[i].hall.ID<<"  |"<<endl;
     }
-    cout<<"---------"<<endl;
+    cout << " ====================================================================================== " << endl;
+//    cout<<"以下是现有的排片数据："<<endl;
+//    cout << "序号\t影片名称\t类型\t时长\t影厅号\t开始时间" << endl;
+//    Film film;
+//    for (int i = 0; i < arrangements.size(); ++i) {
+//        film = arrangements[i].film;
+//        cout << i << "\t" << film.name << "\t" << film.type << "\t" << film.time_during << "\t" << arrangements[i].hall.ID
+//             << "\t";
+//        arrangements[i].begin_time.print_accurate();
+//    }
+//    cout<<"---------"<<endl;
 }
 
 ////从films.txt内读取films的信息并return给vector

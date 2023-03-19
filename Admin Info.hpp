@@ -206,11 +206,14 @@ void Admin::main() {
     int choice{};
     vector<Film> films = load_films(films_json);
     vector<Arrangement> arrangements = load_arrangements(arrangements_json,seats_folder);
-    cout << "【欢迎来到影院管理员界面】\n[1]查看&编辑当前所有电影数据" << endl
-         << "[2]查看每个场次的售票情况" << endl
-         << "[3]进入排片系统" << endl
-         <<"[4]退出"<<endl
-         << "选择一项功能：";
+    cout << "  ====== 欢迎来到影院管理员界面 ======"<<endl;
+    cout << "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n";
+    cout << "┃    [1] 查看&编辑当前所有电影数据   ┃\n";
+    cout << "┃    [2] 查看每个场次的售票情况      ┃\n";
+    cout << "┃    [3] 进入排片系统                ┃\n";
+    cout << "┃    [4] 退出                        ┃\n";
+    cout << "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n";
+    cout<< "【系统提示】选择一项功能：";
     cin >> choice;
     while (true) {
         if (choice == 1) {

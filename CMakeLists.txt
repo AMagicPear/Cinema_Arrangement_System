@@ -3,4 +3,4 @@ project(CinemaCpp)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(CinemaCpp main.cpp Welcome.c "Basic Information.hpp" "Audience Info.hpp" "Admin Info.hpp")
+add_executable(CinemaCpp main.cpp "Basic Information.hpp" "Audience Info.hpp" "Admin Info.hpp" welcome.cpp)

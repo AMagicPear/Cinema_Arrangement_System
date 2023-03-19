@@ -7,6 +7,7 @@
 //#define DEBUG
 #define USER_NUM 100
 #include "Basic Information.hpp"
+string transform_num(int num);
 //定义用户
 class User {
 public:
@@ -20,7 +21,7 @@ public:
     static string login();
     void Buy_Ticket();
     void Return_Ticket();
-    void Show_Ticket();
+    void Show_Tickets();
 };
 //保存用户购票
 void save_user(User user) {
@@ -72,9 +73,9 @@ vector<Ticket> load_user(User& user){
 }
 //输出一张票的信息
 void show_ticket(const Ticket& ticket){
-    cout <<"电影信息："<< ticket.film.name << " " << ticket.film.type << " " << ticket.film.time_during<<"min"<< endl;
-    cout<<"影厅号："<<ticket.Hall_ID<<endl;
-    cout<<"座位位置："<<ticket.seatLocation.row+1<<"行"<<ticket.seatLocation.col+1<<"列"<<endl;
+    cout<<"\t◎"<<"[电影信息🎬] "<< ticket.film.name << " " << ticket.film.type << " " << ticket.film.time_during<<"min"<< endl;
+    cout<<"\t◎"<<"[影厅号🕋] "<<ticket.Hall_ID<<endl;
+    cout<<"\t◎"<<"[座位位置💺] "<<ticket.seatLocation.row+1<<"行"<<ticket.seatLocation.col+1<<"列"<<endl;
 }
 //用户购票
 void User::Buy_Ticket(){
@@ -114,7 +115,7 @@ void User::Buy_Ticket(){
 }
 //退票
 void User::Return_Ticket() {
-    Show_Ticket();
+    Show_Tickets();
     cout<<"请选择你要退的票的序号：";
     int choice;
     cin>>choice;
@@ -127,15 +128,31 @@ void User::Return_Ticket() {
     save_user(*this);
 }
 //看票
-void User::Show_Ticket() {
-    if (size(tickets) == 0)cout << "您还没有购票" << endl;
+void User::Show_Tickets() {
+    if (size(tickets) == 0)cout << "您还没有购票！" << endl;
     else {
-        cout << ID << "拥有的票有：" << endl;
+        cout <<" ======= "<< ID << "拥有的票有 ====== " << endl;
         for (int i = 0; i < size(tickets); ++i) {
-            cout << "票[" << i << "]：" << endl;
+            cout << "🎫票" << transform_num(i) << "：" << endl;
             show_ticket(tickets[i]);
             cout << "-----------" << endl;
         }
+    }
+}
+
+string transform_num(int num){
+    switch (num) {
+        case 0:return "0︎⃣";
+        case 1:return "1︎⃣";
+        case 2:return "2︎⃣";
+        case 3:return "3︎⃣";
+        case 4:return "4︎⃣";
+        case 5:return "5︎⃣";
+        case 6:return "6︎⃣";
+        case 7:return "7︎⃣";
+        case 8:return "8︎⃣";
+        case 9:return "9︎⃣";
+        default:return "";
     }
 }
 
@@ -143,13 +160,20 @@ bool isID_exist(const string&,const string&);
 
 //打印用户菜单界面
 void User::menu(const string& ID_input) {
-    printf("欢迎%s！！！\n", ID_input.c_str());
-    cout<<"[1]购票 [2]查票 [3]退票 [0]退出：";
+    cout<<" ============= 欢迎"<<ID_input<<" ========= \n";
+    cout << "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n";
+    cout << "┃     [1] 购 票     [2] 查 票    ┃\n";
+    cout << "┃     [3] 退 票     [4] 退 出    ┃\n";
+    cout << "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n";
+    cout << "【系统提示】请输入你的选择：";
 }
 //要求用户选择注册或登录，并返回值
 int User::welcome(){
-    cout<<"====用户===="<<endl;
-    printf("[1]注册 [2]登录\n");
+    cout << " ============= 用 户 ============ \n";
+    cout << "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n";
+    cout << "┃     [1] 注 册     [2] 登 录    ┃\n";
+    cout << "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n";
+    cout << "【系统提示】请输入你的选择：";
     int user_Choice=0;
     while (true) {
         cin>>user_Choice;
@@ -188,7 +212,7 @@ void User::main() {
                 goto menu;
             }
             else if(user_Choice_menu==2){
-                user.Show_Ticket();
+                user.Show_Tickets();
                 goto menu;
             }
             //进入退票
