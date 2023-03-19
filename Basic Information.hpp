@@ -57,8 +57,9 @@ void show_seats(const Seats& hall) {
 //定义一个影厅对象
 class Hall{
 public:
-    int ID;
-    Seats seats;
+    int ID; //影厅号
+    Seats seats; //座位表
+    //打印座位表函数
     void print_seats() const{
         show_seats(seats);
     }
@@ -72,8 +73,9 @@ Seats create_hall(int row, int col) {
     return hall;
 }
 //定义预制的影厅对象
-Hall hall_default[2]={{1, create_hall(4,5)},
-                      {2, create_hall(5,5)}};
+Hall hall_default[HALL_NUM]={{1, create_hall(4,5)},
+                      {2, create_hall(5,5)},
+                      {3, create_hall(15,15)}};
 //一部电影
 class Film {
 public:
@@ -81,7 +83,6 @@ public:
     string type;        //类型
     int time_during;  //持续时长（分钟）
     void set(string name_set, string type_set, int time_during_set);
-
     //构造函数
     Film(string name_set = "", string type_set = "", int time_during_set = 0) {
         name = name_set;
@@ -214,6 +215,7 @@ void Arrangement::set(int hall_ID_set, Film film_set, Time begin_time_set) {
     hall = hall_default[hall_ID_set];
     begin_time = begin_time_set;
 }
+//排片构成的向量表示现在所有排片
 typedef vector<Arrangement> Arrangements;
 //座位的行和列结构
 struct SeatLocation{
@@ -229,7 +231,7 @@ public:
     SeatLocation seatLocation{};
     //传入排片来购票，同时会修改排片的座位表
     Ticket(Arrangement& ar_set,SeatLocation seat_set){
-        ar_set.hall.seats[seat_set.row][seat_set.col]=false;
+        ar_set.hall.seats[seat_set.row][seat_set.col]=true;
         film=ar_set.film;
         begin_time=ar_set.begin_time;
         seatLocation=seat_set;
@@ -412,29 +414,29 @@ void show_arrangements(Arrangements arrangements) {
     cout<<"---------"<<endl;
 }
 
-//从films.txt内读取films的信息并return给vector
-Films load_films_old(const string& file_dst){
-    vector<Film> films;
-    //打开目标文件
-    ifstream fin(file_dst);
-    if(!fin){
-        cerr<<"无法打开"<<file_dst<<endl;
-        return {};
-    }
-    //读取文件并push_back到vector中
-    string line;
-    while (getline(fin,line)){
-        istringstream iss(line);
-        //需要读取的信息，若Film增加信息只需要概这里即可
-        string name,type;
-        int time_during;
-        iss>>name>>type>>time_during;
-        Film film(name,type,time_during);
-        films.push_back(film);
-    }
-    fin.close();
-    return films;
-}
+////从films.txt内读取films的信息并return给vector
+//Films load_films_old(const string& file_dst){
+//    vector<Film> films;
+//    //打开目标文件
+//    ifstream fin(file_dst);
+//    if(!fin){
+//        cerr<<"无法打开"<<file_dst<<endl;
+//        return {};
+//    }
+//    //读取文件并push_back到vector中
+//    string line;
+//    while (getline(fin,line)){
+//        istringstream iss(line);
+//        //需要读取的信息，若Film增加信息只需要概这里即可
+//        string name,type;
+//        int time_during;
+//        iss>>name>>type>>time_during;
+//        Film film(name,type,time_during);
+//        films.push_back(film);
+//    }
+//    fin.close();
+//    return films;
+//}
 
 //输出vector<Film>中的电影数据
 void show_films(Films films){

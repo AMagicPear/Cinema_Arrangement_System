@@ -31,7 +31,7 @@ int main() {
 //DEBUG模式的主函数
 
 int main(){
-    show_seats(load_seats("data/halls/2.bin"));
+    Date date1(2023,3,26);
 }
 
 #endif

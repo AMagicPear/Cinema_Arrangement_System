@@ -1,13 +1,6 @@
 [
     {
         "film": {
-            "name": "Hey",
-            "time_during": 30,
-            "type": "奇幻"
-        }
-    },
-    {
-        "film": {
             "name": "流浪地球",
             "time_during": 120,
             "type": "科幻"
@@ -25,6 +18,13 @@
             "name": "我不是药神",
             "time_during": 30,
             "type": "纪录片"
+        }
+    },
+    {
+        "film": {
+            "name": "Magic",
+            "time_during": 60,
+            "type": "Magic"
         }
     }
 ]

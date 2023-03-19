@@ -92,26 +92,50 @@ void User::Buy_Ticket(){
     SeatLocation seatLocation{};
     show_seats(arrangements[choice].hall.seats);
     cout<<"选择座位（行 列）：";
+    reselect_seat:
     cin>>seatLocation.row>>seatLocation.col;
-    arrangements[choice].hall.seats[seatLocation.row-1][seatLocation.col-1]=true;
+    //判断选择的座位是否合法
+    if(seatLocation.row>size(arrangements[choice].hall.seats)||seatLocation.col> size(arrangements[choice].hall.seats[0])){
+        cout<<"选择的位置不合法！请重新选择（行 列）：";
+        goto reselect_seat;
+    }
+    seatLocation.row--;
+    seatLocation.col--;
+    if(arrangements[choice].hall.seats[seatLocation.row][seatLocation.col]){
+        cout<<"该座位已被购买！请重新选择（行 列）：";
+        goto reselect_seat;
+    }
+//    arrangements[choice].hall.seats[seatLocation.row-1][seatLocation.col-1]=true;
     Ticket ticket(arrangements[choice],seatLocation);
     tickets.push_back(ticket);
     save_arrangements(arrangements);
-    save_user(*this);
     cout<<"购票完成！"<<endl;
+    save_user(*this);
 }
 //退票
 void User::Return_Ticket() {
     Show_Ticket();
-    cout<<"【退票界面】敬请期待"<<endl;
+    cout<<"请选择你要退的票的序号：";
+    int choice;
+    cin>>choice;
+    string file_path=(string)seats_folder+"/"+to_string(choice)+".bin";
+    Seats seats = load_seats(file_path);
+    seats[tickets[choice].seatLocation.row][tickets[choice].seatLocation.col]= false;
+    save_seats(seats,file_path);
+    tickets.erase(tickets.begin()+choice);
+    cout<<"退票成功！"<<endl;
+    save_user(*this);
 }
 //看票
 void User::Show_Ticket() {
-    cout<<ID<<"拥有的票有："<<endl;
-    for (int i=0;i< size(tickets);++i){
-        cout<<"票["<<i<<"]："<<endl;
-        show_ticket(tickets[i]);
-        cout<<"-----------"<<endl;
+    if (size(tickets) == 0)cout << "您还没有购票" << endl;
+    else {
+        cout << ID << "拥有的票有：" << endl;
+        for (int i = 0; i < size(tickets); ++i) {
+            cout << "票[" << i << "]：" << endl;
+            show_ticket(tickets[i]);
+            cout << "-----------" << endl;
+        }
     }
 }
 
@@ -125,7 +149,7 @@ void User::menu(const string& ID_input) {
 //要求用户选择注册或登录，并返回值
 int User::welcome(){
     cout<<"====用户===="<<endl;
-    printf("1. 注册\t 2. 登录\n");
+    printf("[1]注册 [2]登录\n");
     int user_Choice=0;
     while (true) {
         cin>>user_Choice;

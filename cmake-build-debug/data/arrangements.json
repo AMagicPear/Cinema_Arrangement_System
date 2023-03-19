@@ -21,24 +21,6 @@
         "No": 1,
         "begin_time": {
             "date": {
-                "day": 15,
-                "month": 3,
-                "year": 2023
-            },
-            "hour": 23,
-            "minute": 14
-        },
-        "film": {
-            "name": "假如给我一天黑暗",
-            "time_during": 90,
-            "type": "魔法"
-        },
-        "hall_ID": 1
-    },
-    {
-        "No": 2,
-        "begin_time": {
-            "date": {
                 "day": 1,
                 "month": 4,
                 "year": 2023
@@ -52,5 +34,23 @@
             "type": "纪录片"
         },
         "hall_ID": 2
+    },
+    {
+        "No": 2,
+        "begin_time": {
+            "date": {
+                "day": 19,
+                "month": 3,
+                "year": 2023
+            },
+            "hour": 12,
+            "minute": 0
+        },
+        "film": {
+            "name": "Magic",
+            "time_during": 60,
+            "type": "Magic"
+        },
+        "hall_ID": 3
     }
 ]

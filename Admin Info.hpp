@@ -176,57 +176,65 @@ vector<Film> edit_films(vector<Film> films) {
 
 class Admin {
 public:
-    static void check() {
-        cout << "====管理员====" << endl;
-        string password_input;
-        cout << "请输入管理员密码：";
-        while (true) {
-            cin >> password_input;
-            if (password_input != admin_password) {
-                printf("输入有误！重新输入：");
-                continue;
-            } else break;
-        }
-        cout << "管理员登录成功！" << endl;
-    }
-
-    static void main() {
-        re_start:
-        int choice{};
-        vector<Film> films = load_films(films_json);
-        vector<Arrangement> arrangements = load_arrangements(arrangements_json,seats_folder);
-        cout << "【欢迎来到影院管理员界面】\n[1]查看&编辑当前所有电影数据" << endl
-             << "[2]查看票房信息" << endl
-             << "[3]进入排片系统" << endl
-             <<"[4]退出"<<endl
-             << "选择一项功能：";
-        cin >> choice;
-        while (true) {
-            if (choice == 1) {
-                //查看&编辑当前所有电影数据
-                show_films(films);
-                films = edit_films(films);
-                save_films(films,films_json);
-                goto re_start;
-            } else if (choice == 2) {
-                //查看票房信息
-                ::exit(2);
-                cin>>choice;
-                goto re_start;
-            } else if (choice == 3) {
-                //进入排片系统
-                show_arrangements(arrangements);
-                save_arrangements(edit_arrangements(arrangements,films));
-                show_arrangements(arrangements);
-                goto re_start;
-            } else if(choice==4){
-                ::exit(4);
-            }
-            else {
-                cout << "输入有误！请输入1~3：";
-            }
-        }
-    }
+    static void check();
+    static void main();
+    static void sale();
 };
-
+void Admin::check() {
+    cout << "====管理员====" << endl;
+    string password_input;
+    cout << "请输入管理员密码：";
+    while (true) {
+        cin >> password_input;
+        if (password_input != admin_password) {
+            printf("输入有误！重新输入：");
+            continue;
+        } else break;
+    }
+    cout << "管理员登录成功！" << endl;
+}
+void Admin::sale() {
+    vector<Arrangement> arrangements=load_arrangements(arrangements_json,seats_folder);
+    show_arrangements(arrangements);
+    cout<<"请输入你要查看的场次的座位表:";
+    int choice;
+    cin>>choice;
+    show_seats(arrangements[choice].hall.seats);
+}
+void Admin::main() {
+    re_start:
+    int choice{};
+    vector<Film> films = load_films(films_json);
+    vector<Arrangement> arrangements = load_arrangements(arrangements_json,seats_folder);
+    cout << "【欢迎来到影院管理员界面】\n[1]查看&编辑当前所有电影数据" << endl
+         << "[2]查看每个场次的售票情况" << endl
+         << "[3]进入排片系统" << endl
+         <<"[4]退出"<<endl
+         << "选择一项功能：";
+    cin >> choice;
+    while (true) {
+        if (choice == 1) {
+            //查看&编辑当前所有电影数据
+            show_films(films);
+            films = edit_films(films);
+            save_films(films,films_json);
+            goto re_start;
+        } else if (choice == 2) {
+            //查看每个排片的购票情况
+            sale();
+            goto re_start;
+        } else if (choice == 3) {
+            //进入排片系统
+            show_arrangements(arrangements);
+            save_arrangements(edit_arrangements(arrangements,films));
+            show_arrangements(arrangements);
+            goto re_start;
+        } else if(choice==4){
+            ::exit(4);
+        }
+        else {
+            cout << "输入有误！请输入1~3：";
+        }
+    }
+}
 #endif //CINEMACPP_ADMIN_INFO_HPP
