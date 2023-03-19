@@ -219,6 +219,9 @@ CinemaCpp_IS_TOP_LEVEL:STATIC=ON
 //Value Computed by CMake
 CinemaCpp_SOURCE_DIR:STATIC=/Users/amagicpear/Library/CloudStorage/OneDrive-njupt.edu.cn/CLionProjects/CinemaCpp
 
+//The directory containing a CMake configuration file for SDL2.
+SDL2_DIR:PATH=/Library/Frameworks/SDL2.framework/Resources/CMake
+
 
 ########################
 # INTERNAL cache entries

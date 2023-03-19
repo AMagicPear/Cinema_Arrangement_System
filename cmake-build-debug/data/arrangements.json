@@ -3,17 +3,17 @@
         "No": 0,
         "begin_time": {
             "date": {
-                "day": 16,
+                "day": 19,
                 "month": 3,
                 "year": 2023
             },
-            "hour": 8,
-            "minute": 34
+            "hour": 20,
+            "minute": 10
         },
         "film": {
-            "name": "流浪地球",
-            "time_during": 120,
-            "type": "科幻"
+            "name": "葫芦娃",
+            "time_during": 10,
+            "type": "动画"
         },
         "hall_ID": 1
     },
@@ -21,17 +21,17 @@
         "No": 1,
         "begin_time": {
             "date": {
-                "day": 1,
-                "month": 4,
+                "day": 20,
+                "month": 3,
                 "year": 2023
             },
-            "hour": 4,
-            "minute": 33
+            "hour": 13,
+            "minute": 12
         },
         "film": {
-            "name": "我不是药神",
-            "time_during": 30,
-            "type": "纪录片"
+            "name": "葫芦娃",
+            "time_during": 10,
+            "type": "动画"
         },
         "hall_ID": 2
     },
@@ -39,18 +39,18 @@
         "No": 2,
         "begin_time": {
             "date": {
-                "day": 19,
+                "day": 20,
                 "month": 3,
                 "year": 2023
             },
-            "hour": 12,
-            "minute": 0
+            "hour": 14,
+            "minute": 58
         },
         "film": {
-            "name": "Magic",
-            "time_during": 60,
-            "type": "Magic"
+            "name": "吞吞吐吐",
+            "time_during": 100,
+            "type": "喜剧"
         },
-        "hall_ID": 3
+        "hall_ID": 1
     }
 ]

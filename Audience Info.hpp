@@ -72,7 +72,7 @@ vector<Ticket> load_user(User& user){
     return tickets;
 }
 //输出一张票的信息
-void show_ticket(const Ticket& ticket){
+void show_ticket(const Ticket& ticket){//todo 票上面不显示时间
     cout<<"\t◎"<<"[电影信息🎬] "<< ticket.film.name << " " << ticket.film.type << " " << ticket.film.time_during<<"min"<< endl;
     cout<<"\t◎"<<"[影厅号🕋] "<<ticket.Hall_ID<<endl;
     cout<<"\t◎"<<"[座位位置💺] "<<ticket.seatLocation.row+1<<"行"<<ticket.seatLocation.col+1<<"列"<<endl;

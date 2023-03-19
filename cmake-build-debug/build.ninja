@@ -49,12 +49,21 @@ build cmake_object_order_depends_target_CinemaCpp: phony || CMakeFiles/CinemaCpp
 build CMakeFiles/CinemaCpp.dir/main.cpp.o: CXX_COMPILER__CinemaCpp_Debug /Users/amagicpear/Library/CloudStorage/OneDrive-njupt.edu.cn/CLionProjects/CinemaCpp/main.cpp || cmake_object_order_depends_target_CinemaCpp
   DEP_FILE = CMakeFiles/CinemaCpp.dir/main.cpp.o.d
   FLAGS = -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.1.sdk -fcolor-diagnostics -std=gnu++17
+  INCLUDES = -I/opt/homebrew/Cellar/sdl2/2.26.4/include
   OBJECT_DIR = CMakeFiles/CinemaCpp.dir
   OBJECT_FILE_DIR = CMakeFiles/CinemaCpp.dir
 
-build CMakeFiles/CinemaCpp.dir/Welcome.c.o: C_COMPILER__CinemaCpp_Debug /Users/amagicpear/Library/CloudStorage/OneDrive-njupt.edu.cn/CLionProjects/CinemaCpp/Welcome.c || cmake_object_order_depends_target_CinemaCpp
-  DEP_FILE = CMakeFiles/CinemaCpp.dir/Welcome.c.o.d
-  FLAGS = -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.1.sdk -fcolor-diagnostics
+build CMakeFiles/CinemaCpp.dir/welcome.cpp.o: CXX_COMPILER__CinemaCpp_Debug /Users/amagicpear/Library/CloudStorage/OneDrive-njupt.edu.cn/CLionProjects/CinemaCpp/welcome.cpp || cmake_object_order_depends_target_CinemaCpp
+  DEP_FILE = CMakeFiles/CinemaCpp.dir/welcome.cpp.o.d
+  FLAGS = -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.1.sdk -fcolor-diagnostics -std=gnu++17
+  INCLUDES = -I/opt/homebrew/Cellar/sdl2/2.26.4/include
+  OBJECT_DIR = CMakeFiles/CinemaCpp.dir
+  OBJECT_FILE_DIR = CMakeFiles/CinemaCpp.dir
+
+build CMakeFiles/CinemaCpp.dir/App.cpp.o: CXX_COMPILER__CinemaCpp_Debug /Users/amagicpear/Library/CloudStorage/OneDrive-njupt.edu.cn/CLionProjects/CinemaCpp/App.cpp || cmake_object_order_depends_target_CinemaCpp
+  DEP_FILE = CMakeFiles/CinemaCpp.dir/App.cpp.o.d
+  FLAGS = -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.1.sdk -fcolor-diagnostics -std=gnu++17
+  INCLUDES = -I/opt/homebrew/Cellar/sdl2/2.26.4/include
   OBJECT_DIR = CMakeFiles/CinemaCpp.dir
   OBJECT_FILE_DIR = CMakeFiles/CinemaCpp.dir
 
@@ -66,8 +75,9 @@ build CMakeFiles/CinemaCpp.dir/Welcome.c.o: C_COMPILER__CinemaCpp_Debug /Users/a
 #############################################
 # Link the executable CinemaCpp
 
-build CinemaCpp: CXX_EXECUTABLE_LINKER__CinemaCpp_Debug CMakeFiles/CinemaCpp.dir/main.cpp.o CMakeFiles/CinemaCpp.dir/Welcome.c.o
+build CinemaCpp: CXX_EXECUTABLE_LINKER__CinemaCpp_Debug CMakeFiles/CinemaCpp.dir/main.cpp.o CMakeFiles/CinemaCpp.dir/welcome.cpp.o CMakeFiles/CinemaCpp.dir/App.cpp.o | /opt/homebrew/Cellar/sdl2/2.26.4/lib/libSDL2-2.0.0.dylib
   FLAGS = -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.1.sdk
+  LINK_LIBRARIES = /opt/homebrew/Cellar/sdl2/2.26.4/lib/libSDL2-2.0.0.dylib
   OBJECT_DIR = CMakeFiles/CinemaCpp.dir
   POST_BUILD = :
   PRE_LINK = :

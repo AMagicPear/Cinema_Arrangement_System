@@ -1,5 +1,5 @@
 # 项目排除路径
-/cmake-build-debug/.lightly
+/cmake-build-debug/.cmake
 .c_bin
 .classes
 logs
@@ -9,3 +9,4 @@ dist
 dist-ssr
 *.local
 .lightly
+/BingAnswers/

@@ -2,9 +2,10 @@
 #include "Basic Information.hpp"
 #include "Audience Info.hpp"
 #include "Admin Info.hpp"
+
 //声明外部函数：欢迎和选择界面部分，详见文件Welcome.c
 extern int main_menu();
-//#define DEBUG //定义Debug模式
+#define DEBUG //定义Debug模式
 #ifndef DEBUG
 //主函数
 int main() {
@@ -32,10 +33,8 @@ int main() {
 #else
 //DEBUG模式的主函数
 
-int main(){
-//    Date date1(2023,3,26);
-//    main_menu();
-    show_arrangements(load_arrangements(arrangements_json,seats_folder));
+int main(int argc, char **argv) {
+
 }
 
 #endif

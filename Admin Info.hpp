@@ -12,7 +12,7 @@ const std::string admin_password = "ampc";
 using namespace std;
 
 //传入vector<Film>要求用户排片并return最后的排片
-vector<Arrangement> edit_arrangements(Arrangements &arrangements, vector<Film> films) {
+vector<Arrangement> edit_arrangements(Arrangements &arrangements, vector<Film> films) { //todo 删除场次后输出了两遍排片列表
 //    show_films(films);
 //    vector<Arrangement> arrangements;
     restart:
@@ -122,12 +122,13 @@ vector<Arrangement> edit_arrangements(Arrangements &arrangements, vector<Film> f
 }
 
 //要求用户修改电影数据并return
-vector<Film> edit_films(vector<Film> films) {
-    int choice=1;
-    while (choice == 1) {
+vector<Film> edit_films(vector<Film> films) { //todo 数字部分有问题！
+    int choice1=1;
+    while (choice1 == 1) {
         cout << "选择操作：[1]增加电影 [2]删除电影\n";
-        cin >> choice;
-        if(choice==1){
+        int choice2;
+        cin >> choice2;
+        if(choice2==1){
             cout<<"请输入要增加的电影的数据：\n";
             Film film_input;
             cout<<"名称：";
@@ -138,16 +139,16 @@ vector<Film> edit_films(vector<Film> films) {
             cin>>film_input.time_during;
             films.push_back(film_input);
             cout<<"增加完成！";
-        } else if(choice==2){
+        } else if(choice2==2){
             cout<<"请输入要删除的电影序号或名称：";
             string film_input;
             cin>>film_input;
             // 查找Vector<Film>中是否有对应的电影
             bool found = false; // 标记是否找到电影
             for (int i = 0; i < films.size(); i++) {
-                if (film_input == films[i].name || film_input == to_string(i + 1)) {
+                if (film_input == films[i].name || film_input == to_string(i)) {
                     // 如果输入的是电影名称或者序号，就把对应的Film对象赋值给film_found，并把found设为true
-                    films.erase(films.begin()+i-1);
+                    films.erase(films.begin()+i);
                     found = true;
                     break;
                 }
@@ -159,15 +160,15 @@ vector<Film> edit_films(vector<Film> films) {
             }
         } else{
             cout<<"输入有误！请重新输入：";
-            cin>>choice;
+            cin>>choice2;
             continue;
         }
         // 询问用户是否要继续编辑电影
         cout << "[1]继续编辑 [2]提交操作：";
-        cin>>choice;
-        while (choice != 1 && choice != 2) {
+        cin >> choice1;
+        while (choice1 != 1 && choice1 != 2) {
             cout << "输入无效，请重新输入（y/n)" << endl;
-            cin>>choice;
+            cin >> choice1;
         }
     }
     cout<<"提交成功！"<<endl;

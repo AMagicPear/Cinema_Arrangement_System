@@ -464,7 +464,7 @@ void show_arrangements(Arrangements arrangements) {
 void show_films(Films films){
     cout<<"以下是现有电影的数据："<<endl;
     for (int i = 0; i < films.size(); i++) {
-        cout << i + 1 << ". " << films[i].name << " " << films[i].type << " " << films[i].time_during<<"min"<< endl;
+        cout<<"["<< i << "] " << films[i].name << " " << films[i].type << " " << films[i].time_during<<"min"<< endl;
     }
     cout<<"------------"<<endl;
 }
