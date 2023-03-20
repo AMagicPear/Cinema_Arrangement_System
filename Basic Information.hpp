@@ -17,21 +17,14 @@
 using namespace std;
 using json = nlohmann::json;
 //基本信息初始化
-//#define ARRANGE_NUM 10
-//#define FILM_NUM 5
-#define HALL_NUM 3
-//Film* film_list=new Film[FILM_NUM];
-//vector<Film> film_list;
-//auto* arrangement_list=new Arrangement[ARRANGE_NUM]{};
-//vector<Arrangement> arrangement_list;
-
-#define films_txt "data/films.txt"
+#define HALL_NUM 5
 #define films_json "data/films.json"
 #define arrangements_json "data/arrangements.json"
 #define seats_folder "data/halls"
 #define user_folder "data/users"
 #define user_info "data/users/userinfo.txt"
 using namespace std;
+
 // 定义Hall类型为bool类型的二维vector表示座位表
 typedef vector<vector<bool>> Seats;
 // 定义一个打印Hall座位表的函数
@@ -74,9 +67,11 @@ Seats create_hall(int row, int col) {
     return hall;
 }
 //定义预制的影厅对象
-Hall hall_default[HALL_NUM]={{1, create_hall(4,5)},
-                      {2, create_hall(5,5)},
-                      {3, create_hall(15,15)}};
+Hall hall_default[HALL_NUM]={{1, create_hall(8,15)},
+                      {2, create_hall(12,25)},
+                      {3, create_hall(7,15)},
+                      {4, create_hall(16,32)},
+                      {5, create_hall(10,24)}};
 //一部电影
 class Film {
 public:
@@ -193,6 +188,11 @@ struct Time {
         hour = h;
         minute = m;
     }
+    Time(int i){
+        ::time_t t= ::time(nullptr);
+        ::tm *ltm= ::localtime(&t);
+        *this={{1900 + ltm->tm_year,1 + ltm->tm_mon,ltm->tm_mday},ltm->tm_hour,ltm->tm_min};
+    }
 };
 
 //一次排片
@@ -230,6 +230,7 @@ public:
     Time begin_time;
     int Hall_ID;
     SeatLocation seatLocation{};
+    Time buy_time{};
     //传入排片来购票，同时会修改排片的座位表
     Ticket(Arrangement& ar_set,SeatLocation seat_set){
         ar_set.hall.seats[seat_set.row][seat_set.col]=true;
@@ -237,13 +238,15 @@ public:
         begin_time=ar_set.begin_time;
         seatLocation=seat_set;
         Hall_ID=ar_set.hall.ID;
+        buy_time=Time(0); //增加票时自动记录购票时间
     }
     //直接定义一张票的内容
-    Ticket(Film film_set,Time begin_time_set,int hall_set,SeatLocation seat_set){
+    Ticket(Film film_set,Time begin_time_set,int hall_set,SeatLocation seat_set,Time buy_time_set){
         film=film_set;
         begin_time=begin_time_set;
         Hall_ID=hall_set;
         seatLocation=seat_set;
+        buy_time=buy_time_set;
     }
 };
 
@@ -410,7 +413,7 @@ void show_arrangements(Arrangements arrangements) {
     <<setw(9)<<"| 时长"
     <<setw(17)<<"|  放映日期" //2023/01/23
     <<setw(15)<<"| 放映时间"
-    <<setw(9)<<"| 影厅"<<"|"<<endl; //todo 可增加余票显示
+    <<setw(9)<<"| 影厅"<<"|"<<endl;
     Film film;
     cout<< setiosflags(ios::right);
     for(int i=0;i<arrangements.size();++i){
@@ -424,41 +427,7 @@ void show_arrangements(Arrangements arrangements) {
              cout<<"|  "<<arrangements[i].hall.ID<<"  |"<<endl;
     }
     cout << " ====================================================================================== " << endl;
-//    cout<<"以下是现有的排片数据："<<endl;
-//    cout << "序号\t影片名称\t类型\t时长\t影厅号\t开始时间" << endl;
-//    Film film;
-//    for (int i = 0; i < arrangements.size(); ++i) {
-//        film = arrangements[i].film;
-//        cout << i << "\t" << film.name << "\t" << film.type << "\t" << film.time_during << "\t" << arrangements[i].hall.ID
-//             << "\t";
-//        arrangements[i].begin_time.print_accurate();
-//    }
-//    cout<<"---------"<<endl;
 }
-
-////从films.txt内读取films的信息并return给vector
-//Films load_films_old(const string& file_dst){
-//    vector<Film> films;
-//    //打开目标文件
-//    ifstream fin(file_dst);
-//    if(!fin){
-//        cerr<<"无法打开"<<file_dst<<endl;
-//        return {};
-//    }
-//    //读取文件并push_back到vector中
-//    string line;
-//    while (getline(fin,line)){
-//        istringstream iss(line);
-//        //需要读取的信息，若Film增加信息只需要概这里即可
-//        string name,type;
-//        int time_during;
-//        iss>>name>>type>>time_during;
-//        Film film(name,type,time_during);
-//        films.push_back(film);
-//    }
-//    fin.close();
-//    return films;
-//}
 
 //输出vector<Film>中的电影数据
 void show_films(Films films){
@@ -468,37 +437,14 @@ void show_films(Films films){
     }
     cout<<"------------"<<endl;
 }
-
-/*//为避免信息定位困难，排片的排序仅在输出时进行！文件内容不变！
-// 定义一个函数，用来比较两个Arrangement对象的begin_time先后
-bool compare_begin_time(const Arrangement& a1, const Arrangement& a2) {
-    // 如果a1的begin_time的日期早于a2的begin_time的日期，就返回true
-    if (a1.begin_time.date < a2.begin_time.date) {
-        return true;
+//用于重新初始化所有场次的座位表
+void revise_halls_and_clear_seats(){
+    Arrangements arrangements0=load_arrangements(arrangements_json,seats_folder);
+    Arrangements arrangements1;
+    for (int i = 0; i < size(arrangements0); ++i) {
+        Arrangement ar(arrangements0[i].hall.ID,arrangements0[i].film,arrangements0[i].begin_time);
+        arrangements1.push_back(ar);
     }
-        // 如果a1的begin_time的日期等于a2的begin_time的日期，就比较它们的小时和分钟
-    else if (a1.begin_time.date == a2.begin_time.date) {
-        // 如果a1的begin_time的小时早于a2的begin_time的小时，就返回true
-        if (a1.begin_time.hour < a2.begin_time.hour) {
-            return true;
-        }
-            // 如果a1的begin_time的小时等于a2的begin_time的小时，就比较它们的分钟
-        else if (a1.begin_time.hour == a2.begin_time.hour) {
-            // 如果a1的begin_time的分钟早于或等于a2的begin_time分钟，就返回true
-            if (a1.begin_time.minute <= a2.begin_time.minute) {
-                return true;
-            }
-        }
-    }
-
-    // 其他情况都返回false
-    return false;
+    save_arrangements(arrangements1);
 }
-// 定义一个函数，传入一个vector<Arrangement>对象，并根据其中每个元素（Arrangement对象）中包含有关开始时间（Time对象）中包含有关日期（Date对象）中包含有关年月日（int类型）以及开始时间（Time对象）中包含有关时分（int类型）来对这个Vector排序
-void sort_arrangements(Arrangements& arrangements) {
-    // 使用algorithm库中提供sort函数，并传入自定义compare_begin_tim函数作为比较规则来对vector进行排序
-    sort(arrangements.begin(), arrangements.end(), compare_begin_time);
-}*/
-
-
 #endif //CINEMA_BASIC_INFORMATION_H

@@ -27,23 +27,35 @@ public:
 void save_user(User user) {
     json j;
     for (int i = 0; i < size(user.tickets); ++i) {
-        j.push_back({{"film", {
-                {"name", user.tickets[i].film.name},
-                {"type", user.tickets[i].film.type},
-                {"time_during", user.tickets[i].film.time_during}
-        }}, {"begin_time", {
-                {"date", {
-                        {"year", user.tickets[i].begin_time.date.year},
-                        {"month", user.tickets[i].begin_time.date.month},
-                        {"day", user.tickets[i].begin_time.date.day}
-                }},
-                {"hour", user.tickets[i].begin_time.hour},
-                {"minute", user.tickets[i].begin_time.minute}}
-                },{"hall_ID",user.tickets[i].Hall_ID},{"seatLocation",{
-                         {"row",user.tickets[i].seatLocation.row},
-                         {"col",user.tickets[i].seatLocation.col}
-                     }
-        }});
+        j.push_back({{"film",         {
+                                              {"name", user.tickets[i].film.name},
+                                              {"type", user.tickets[i].film.type},
+                                              {"time_during", user.tickets[i].film.time_during}
+                                      }},
+                     {"begin_time",   {
+                                              {"date", {
+                                                               {"year", user.tickets[i].begin_time.date.year},
+                                                               {"month", user.tickets[i].begin_time.date.month},
+                                                               {"day", user.tickets[i].begin_time.date.day}
+                                                       }},
+                                              {"hour", user.tickets[i].begin_time.hour},
+                                              {"minute",      user.tickets[i].begin_time.minute}}
+                     },
+                     {"hall_ID",      user.tickets[i].Hall_ID},
+                     {"seatLocation", {
+                                              {"row",  user.tickets[i].seatLocation.row},
+                                              {"col",  user.tickets[i].seatLocation.col}
+                                      }
+                     },
+                     {"buy_time",     {
+                                              {"date", {
+                                                               {"year", user.tickets[i].buy_time.date.year},
+                                                               {"month", user.tickets[i].buy_time.date.month},
+                                                               {"day", user.tickets[i].buy_time.date.day}
+                                                       }},
+                                              {"hour", user.tickets[i].buy_time.hour},
+                                              {"minute",      user.tickets[i].buy_time.minute}}}
+                    });
     }
     ofstream file((string) (((string) user_folder) + "/" + user.ID + ".json"));
     file<<j.dump(4);
@@ -64,7 +76,9 @@ vector<Ticket> load_user(User& user){
         Date date(i["begin_time"]["date"]["year"], i["begin_time"]["date"]["month"], i["begin_time"]["date"]["day"]);
         Time begin_time(date,i["begin_time"]["hour"],i["begin_time"]["minute"]);
         SeatLocation seatLocation({i["seatLocation"]["row"],i["seatLocation"]["col"]});
-        Ticket ticket(film,begin_time,i["hall_ID"],seatLocation);
+        Date buy_date(i["buy_time"]["date"]["year"],i["buy_time"]["date"]["month"],i["buy_time"]["date"]["day"]);
+        Time buy_time(buy_date,i["buy_time"]["hour"],i["buy_time"]["minute"]);
+        Ticket ticket(film,begin_time,i["hall_ID"],seatLocation,buy_time);
         tickets.push_back(ticket);
     }
     file.close();
@@ -72,10 +86,20 @@ vector<Ticket> load_user(User& user){
     return tickets;
 }
 //输出一张票的信息
-void show_ticket(const Ticket& ticket){//todo 票上面不显示时间
+void show_ticket(const Ticket& ticket){
     cout<<"\t◎"<<"[电影信息🎬] "<< ticket.film.name << " " << ticket.film.type << " " << ticket.film.time_during<<"min"<< endl;
     cout<<"\t◎"<<"[影厅号🕋] "<<ticket.Hall_ID<<endl;
     cout<<"\t◎"<<"[座位位置💺] "<<ticket.seatLocation.row+1<<"行"<<ticket.seatLocation.col+1<<"列"<<endl;
+    cout<<"\t◎"<<"[开始时间🕓] ";
+    ticket.begin_time.print_date();
+    cout<<" ";
+    ticket.begin_time.print_accurate();
+    cout<<endl;
+    cout<<"\t◎"<<"[购票时间🕓] ";
+    ticket.buy_time.print_date();
+    cout<<" ";
+    ticket.buy_time.print_accurate();
+    cout<<endl;
 }
 //用户购票
 void User::Buy_Ticket(){

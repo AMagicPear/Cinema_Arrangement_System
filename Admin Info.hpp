@@ -12,7 +12,7 @@ const std::string admin_password = "ampc";
 using namespace std;
 
 //传入vector<Film>要求用户排片并return最后的排片
-vector<Arrangement> edit_arrangements(Arrangements &arrangements, vector<Film> films) { //todo 删除场次后输出了两遍排片列表
+vector<Arrangement> edit_arrangements(Arrangements &arrangements, vector<Film> films) {
 //    show_films(films);
 //    vector<Arrangement> arrangements;
     restart:
@@ -24,13 +24,6 @@ vector<Arrangement> edit_arrangements(Arrangements &arrangements, vector<Film> f
     if (c1 == 1) {
         restart1:
         show_films(films);
-        cout << "请输入影厅号（1-" << HALL_NUM << "）：";
-        int hall_ID;
-        cin >> hall_ID;
-        while (hall_ID < 1 || hall_ID > HALL_NUM) {
-            cout << "影厅号无效，请重新输入（1-" << HALL_NUM << "）：";
-            cin >> hall_ID;
-        }
         cout << "请选择电影（输入序号或者名称）：";
         string film_input;
         cin >> film_input;
@@ -38,7 +31,7 @@ vector<Arrangement> edit_arrangements(Arrangements &arrangements, vector<Film> f
         Film film_found("", "", 0); // 创建一个空的Film对象
         bool found = false; // 标记是否找到电影
         for (int i = 0; i < films.size(); i++) {
-            if (film_input == films[i].name || film_input == to_string(i + 1)) {
+            if (film_input == films[i].name || film_input == to_string(i)) {
                 // 如果输入的是电影名称或者序号，就把对应的Film对象赋值给film_found，并把found设为true
                 film_found = films[i];
                 found = true;
@@ -49,6 +42,13 @@ vector<Arrangement> edit_arrangements(Arrangements &arrangements, vector<Film> f
             // 如果没有找到对应的电影，就提示用户并跳过这次循环
             cout << "没有这部电影，请重新选择：";
             goto restart1;
+        }
+        cout << "请输入影厅号（1-" << HALL_NUM << "）：";
+        int hall_ID;
+        cin >> hall_ID;
+        while (hall_ID < 1 || hall_ID > HALL_NUM) {
+            cout << "影厅号无效，请重新输入（1-" << HALL_NUM << "）：";
+            cin >> hall_ID;
         }
         // 询问用户输入排片的开始时间
         cout << "请输入排片的开始日期（年/月/日）：";
@@ -104,7 +104,6 @@ vector<Arrangement> edit_arrangements(Arrangements &arrangements, vector<Film> f
         cout<<"请输入要删除的排片序号：";
         cin>>to_delete;
         arrangements.erase(arrangements.begin()+to_delete);
-        show_arrangements(arrangements);
     }
     // 询问用户是否要继续更改排片
     show_arrangements(arrangements);
@@ -122,7 +121,7 @@ vector<Arrangement> edit_arrangements(Arrangements &arrangements, vector<Film> f
 }
 
 //要求用户修改电影数据并return
-vector<Film> edit_films(vector<Film> films) { //todo 数字部分有问题！
+vector<Film> edit_films(vector<Film> films) {
     int choice1=1;
     while (choice1 == 1) {
         cout << "选择操作：[1]增加电影 [2]删除电影\n";
@@ -200,7 +199,7 @@ void Admin::sale() {
     cout<<"请输入你要查看的场次的座位表:";
     int choice;
     cin>>choice;
-    show_seats(arrangements[choice].hall.seats);
+    show_seats(arrangements[choice].hall.seats);//todo 增加查看购票人信息功能
 }
 void Admin::main() {
     re_start:
