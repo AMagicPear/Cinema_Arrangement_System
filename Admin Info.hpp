@@ -199,7 +199,10 @@ void Admin::sale() {
     cout<<"请输入你要查看的场次的座位表:";
     int choice;
     cin>>choice;
-    show_seats(arrangements[choice].hall.seats);//todo 增加查看购票人信息功能
+    Arrangement ar=arrangements[choice];
+    show_seats(ar.hall.seats);
+    int choice2;
+
 }
 void Admin::main() {
     re_start:

@@ -13,15 +13,17 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <filesystem>
 #include "nlohmann/json.hpp"
 using namespace std;
 using json = nlohmann::json;
+#define fs std::filesystem
 //基本信息初始化
 #define HALL_NUM 5
 #define films_json "data/films.json"
 #define arrangements_json "data/arrangements.json"
 #define seats_folder "data/halls"
-#define user_folder "data/users"
+#define user_folder "/Users/amagicpear/Library/CloudStorage/OneDrive-njupt.edu.cn/CLionProjects/CinemaCpp/cmake-build-debug/data/users"
 #define user_info "data/users/userinfo.txt"
 using namespace std;
 
