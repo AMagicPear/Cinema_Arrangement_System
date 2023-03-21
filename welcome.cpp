@@ -2,10 +2,11 @@
 // Created by AMagicPear on 2023/3/19.
 //
 #include <iostream>
+
 using namespace std;
 
-int main_menu(){
-    cout <<endl;
+int main_menu() {
+    cout << endl;
     cout << "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n";
     cout << "┃                                      ┃\t\n";
     cout << "┃             [1] 用    户             ┃\t\n";
@@ -17,7 +18,7 @@ int main_menu(){
     cout << "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n";
     cout << endl;
     int choice = -1;
-    cout<<"【系统提示】请输入你的选择项（0-2）：";
-    cin>>choice;
+    cout << "【系统提示】请输入你的选择项（0-2）：";
+    cin >> choice;
     return choice;
 }

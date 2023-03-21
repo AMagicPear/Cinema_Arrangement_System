@@ -4,6 +4,7 @@
 //管理员界面
 #ifndef CINEMACPP_ADMIN_INFO_HPP
 #define CINEMACPP_ADMIN_INFO_HPP
+
 #include "Basic Information.hpp"
 
 //定义管理员密码
@@ -99,11 +100,11 @@ vector<Arrangement> edit_arrangements(Arrangements &arrangements, vector<Film> f
         // 用用户输入的信息来构造一个Arrangement对象，并把它push_back到Vector<Arrangement>中
         Arrangement arrangement(hall_ID, film_found, begin_time);
         arrangements.push_back(arrangement);
-    } else if(c1==2){
+    } else if (c1 == 2) {
         int to_delete;
-        cout<<"请输入要删除的排片序号：";
-        cin>>to_delete;
-        arrangements.erase(arrangements.begin()+to_delete);
+        cout << "请输入要删除的排片序号：";
+        cin >> to_delete;
+        arrangements.erase(arrangements.begin() + to_delete);
     }
     // 询问用户是否要继续更改排片
     show_arrangements(arrangements);
@@ -122,32 +123,32 @@ vector<Arrangement> edit_arrangements(Arrangements &arrangements, vector<Film> f
 
 //要求用户修改电影数据并return
 vector<Film> edit_films(vector<Film> films) {
-    int choice1=1;
+    int choice1 = 1;
     while (choice1 == 1) {
         cout << "选择操作：[1]增加电影 [2]删除电影\n";
         int choice2;
         cin >> choice2;
-        if(choice2==1){
-            cout<<"请输入要增加的电影的数据：\n";
+        if (choice2 == 1) {
+            cout << "请输入要增加的电影的数据：\n";
             Film film_input;
-            cout<<"名称：";
-            cin>>film_input.name;
-            cout<<"类型：";
-            cin>>film_input.type;
-            cout<<"时长：";
-            cin>>film_input.time_during;
+            cout << "名称：";
+            cin >> film_input.name;
+            cout << "类型：";
+            cin >> film_input.type;
+            cout << "时长：";
+            cin >> film_input.time_during;
             films.push_back(film_input);
-            cout<<"增加完成！";
-        } else if(choice2==2){
-            cout<<"请输入要删除的电影序号或名称：";
+            cout << "增加完成！";
+        } else if (choice2 == 2) {
+            cout << "请输入要删除的电影序号或名称：";
             string film_input;
-            cin>>film_input;
+            cin >> film_input;
             // 查找Vector<Film>中是否有对应的电影
             bool found = false; // 标记是否找到电影
             for (int i = 0; i < films.size(); i++) {
                 if (film_input == films[i].name || film_input == to_string(i)) {
                     // 如果输入的是电影名称或者序号，就把对应的Film对象赋值给film_found，并把found设为true
-                    films.erase(films.begin()+i);
+                    films.erase(films.begin() + i);
                     found = true;
                     break;
                 }
@@ -157,9 +158,9 @@ vector<Film> edit_films(vector<Film> films) {
                 cout << "没有这部电影，请重新选择。" << endl;
                 continue;
             }
-        } else{
-            cout<<"输入有误！请重新输入：";
-            cin>>choice2;
+        } else {
+            cout << "输入有误！请重新输入：";
+            cin >> choice2;
             continue;
         }
         // 询问用户是否要继续编辑电影
@@ -170,16 +171,19 @@ vector<Film> edit_films(vector<Film> films) {
             cin >> choice1;
         }
     }
-    cout<<"提交成功！"<<endl;
+    cout << "提交成功！" << endl;
     return films;
 }
 
 class Admin {
 public:
     static void check();
+
     static void main();
+
     static void sale();
 };
+
 void Admin::check() {
     cout << "====管理员====" << endl;
     string password_input;
@@ -193,34 +197,74 @@ void Admin::check() {
     }
     cout << "管理员登录成功！" << endl;
 }
+
 void Admin::sale() {
-    vector<Arrangement> arrangements=load_arrangements(arrangements_json,seats_folder);
+    vector<Arrangement> arrangements = load_arrangements(arrangements_json, seats_folder);
     show_arrangements(arrangements);
-    cout<<"请输入你要查看的场次的座位表:";
+    cout << "请输入你要查看的场次的座位表:";
     int choice;
-    cin>>choice;
-    show_seats(arrangements[choice].hall.seats);//todo 增加查看购票人信息功能
+    cin >> choice;
+    Arrangement ar = arrangements[choice];
+    show_seats(ar.hall.seats);
+//管理员查看某座位的购票人信息
+    cout << "是否要查看某座位的购票人信息？" << endl;
+    int choice2;
+    retype:
+    cout << "[1] 是 [2] 否：";
+    cin >> choice2;
+    if (choice2 == 1) {
+        int row, col;
+        cout << "请输入要查看的座位（行 列）：";
+        cin >> row >> col;
+        if (!ar.hall.seats[row - 1][col - 1]) {
+            cout << "该座位尚未被购买！" << endl;
+            return;
+        }
+        std::string path = user_folder;
+        for (const auto &entry: fs::directory_iterator(path)) {
+            fs::path filename = entry.path();
+            if (filename.extension() == ".json") {
+                User user;
+                user.ID = filename.stem();
+                load_user(user);
+                for (Ticket ticket: user.tickets) {
+                    if (ticket.film.name == ar.film.name && ticket.begin_time.date == ar.begin_time.date &&
+                        ticket.begin_time.hour == ar.begin_time.hour &&
+                        ticket.begin_time.minute == ar.begin_time.minute && ticket.Hall_ID == ar.hall.ID) {
+                        if (ticket.seatLocation.row == row - 1 && ticket.seatLocation.col == col - 1) {
+                            cout << "该座位被用户[" << user.ID << "]购买\n";
+                            user.Show_Tickets();
+                            return;
+                        }
+                    } else continue;
+                }
+                cerr << "影院信息与用户信息不匹配！" << endl;
+            }
+        }
+    } else if (choice2 == 2) return;
+    else goto retype;
 }
+
 void Admin::main() {
     re_start:
     int choice{};
     vector<Film> films = load_films(films_json);
-    vector<Arrangement> arrangements = load_arrangements(arrangements_json,seats_folder);
-    cout << "  ====== 欢迎来到影院管理员界面 ======"<<endl;
+    vector<Arrangement> arrangements = load_arrangements(arrangements_json, seats_folder);
+    cout << "  ====== 欢迎来到影院管理员界面 ======" << endl;
     cout << "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n";
     cout << "┃    [1] 查看&编辑当前所有电影数据   ┃\n";
     cout << "┃    [2] 查看每个场次的售票情况      ┃\n";
     cout << "┃    [3] 进入排片系统                ┃\n";
     cout << "┃    [4] 退出                        ┃\n";
     cout << "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n";
-    cout<< "【系统提示】选择一项功能：";
+    cout << "【系统提示】选择一项功能：";
     cin >> choice;
     while (true) {
         if (choice == 1) {
             //查看&编辑当前所有电影数据
             show_films(films);
             films = edit_films(films);
-            save_films(films,films_json);
+            save_films(films, films_json);
             goto re_start;
         } else if (choice == 2) {
             //查看每个排片的购票情况
@@ -229,15 +273,15 @@ void Admin::main() {
         } else if (choice == 3) {
             //进入排片系统
             show_arrangements(arrangements);
-            save_arrangements(edit_arrangements(arrangements,films));
+            save_arrangements(edit_arrangements(arrangements, films));
             show_arrangements(arrangements);
             goto re_start;
-        } else if(choice==4){
+        } else if (choice == 4) {
             ::exit(4);
-        }
-        else {
+        } else {
             cout << "输入有误！请输入1~3：";
         }
     }
 }
+
 #endif //CINEMACPP_ADMIN_INFO_HPP

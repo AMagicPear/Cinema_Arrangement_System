@@ -7,6 +7,7 @@
 extern int main_menu();
 //#define DEBUG //定义Debug模式
 #ifndef DEBUG
+
 //主函数
 int main() {
     //确定两个大分支中选择哪一个
