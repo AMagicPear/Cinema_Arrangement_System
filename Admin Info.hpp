@@ -50,7 +50,7 @@ vector<Arrangement> edit_arrangements(vector<Arrangement> &arrangements, vector<
             cin >> hall_ID;
         }
         // 询问用户输入排片的开始时间
-        cout << "请输入排片的开始日期（可输入 tomorrow 或 年/月/日）：";
+        cout << "请输入排片的开始日期（可输入 tm 或 td 或 年/月/日）：";
         string date_input;
         Date date;
         Date today(0);
@@ -58,16 +58,19 @@ vector<Arrangement> edit_arrangements(vector<Arrangement> &arrangements, vector<
         cin >> date_input;
         int year, month, day;
         // 如果用户输入"tomorrow"，就用明天来设置年月日
-        if (date_input == "tomorrow") {
+        if (date_input == "tm") {
             date.set(1);
-        } else {
+        } else if(date_input=="td"){
+            date.set(0);
+        }
+        else {
             // 如果用户输入其他字符串，就用istringstream来分割并转换为整数
             istringstream iss(date_input);
             char slash1, slash2;
             iss >> year >> slash1 >> month >> slash2 >> day;
             date.set(year, month, day);
             // 检查用户输入的日期是否合法
-            if (date<today||date==today||date.month < 1 || date.month > 12 || date.day < 1 || date.day > 31) {
+            if (date<today||date.month < 1 || date.month > 12 || date.day < 1 || date.day > 31) {
                 cout << "日期无效，请重新输入（年/月/日）：";
                 goto retype_date;
             }
@@ -84,7 +87,7 @@ vector<Arrangement> edit_arrangements(vector<Arrangement> &arrangements, vector<
         Time begin_time(date, hour, minute);
         // 判断该时段内是否和此影厅已有的排片冲突
         for (const auto& ar:arrangements) {
-            if(hall_ID==ar.hall.ID&&begin_time-ar.begin_time<ar.film.time_during){
+            if(hall_ID==ar.hall.ID&&(!(begin_time-ar.begin_time>ar.film.time_during||begin_time-ar.begin_time<(-film_found.time_during)))){
                 cerr<<ar.hall.ID<<"号厅场次时间冲突！此排片无效！"<<endl;
                 goto go_on;
             }
@@ -223,7 +226,7 @@ void Admin::sale() {
                     if (ticket.film.name == ar.film.name && ticket.begin_time.date == ar.begin_time.date &&
                         ticket.begin_time.hour == ar.begin_time.hour &&
                         ticket.begin_time.minute == ar.begin_time.minute && ticket.Hall_ID == ar.hall.ID) {
-                        if (ticket.seatLocation.row == row - 1 && ticket.seatLocation.col == col - 1) {
+                        if (ticket.seatLocation.row == row && ticket.seatLocation.col == col) {
                             cout << "该座位被用户[" << user.ID << "]购买\n";
                             user.Show_Tickets();
                             return;

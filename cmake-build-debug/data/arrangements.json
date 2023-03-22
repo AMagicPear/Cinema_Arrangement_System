@@ -3,18 +3,72 @@
         "No": 0,
         "begin_time": {
             "date": {
-                "day": 5,
-                "month": 4,
+                "day": 23,
+                "month": 3,
                 "year": 2023
             },
-            "hour": 12,
-            "minute": 27
+            "hour": 8,
+            "minute": 0
+        },
+        "film": {
+            "name": "三个葫芦娃",
+            "time_during": 127,
+            "type": "喜剧"
+        },
+        "hall_ID": 1
+    },
+    {
+        "No": 1,
+        "begin_time": {
+            "date": {
+                "day": 23,
+                "month": 3,
+                "year": 2023
+            },
+            "hour": 8,
+            "minute": 5
         },
         "film": {
             "name": "耗子冲冲冲",
             "time_during": 120,
             "type": "科幻"
         },
-        "hall_ID": 4
+        "hall_ID": 2
+    },
+    {
+        "No": 2,
+        "begin_time": {
+            "date": {
+                "day": 22,
+                "month": 3,
+                "year": 2023
+            },
+            "hour": 19,
+            "minute": 0
+        },
+        "film": {
+            "name": "铃芽之旅",
+            "time_during": 128,
+            "type": "动漫"
+        },
+        "hall_ID": 3
+    },
+    {
+        "No": 3,
+        "begin_time": {
+            "date": {
+                "day": 23,
+                "month": 3,
+                "year": 2023
+            },
+            "hour": 13,
+            "minute": 0
+        },
+        "film": {
+            "name": "南京孤儿",
+            "time_during": 135,
+            "type": "纪录片"
+        },
+        "hall_ID": 6
     }
 ]

@@ -21,7 +21,7 @@ int main() {
             break;
         case 2:
             //进入管理员大分支
-            Admin::check();
+//            Admin::check();
             Admin::main();
             break;
         case 0:

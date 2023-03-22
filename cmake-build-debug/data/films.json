@@ -33,12 +33,5 @@
             "time_during": 135,
             "type": "纪录片"
         }
-    },
-    {
-        "film": {
-            "name": "测试2",
-            "time_during": 100,
-            "type": "测试类型"
-        }
     }
 ]

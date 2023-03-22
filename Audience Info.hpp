@@ -103,7 +103,7 @@ void show_ticket(const Ticket &ticket) {
     cout << "\t◎" << "[电影信息🎬] " << ticket.film.name << " " << ticket.film.type << " " << ticket.film.time_during
          << "min" << endl;
     cout << "\t◎" << "[影厅号🕋] " << ticket.Hall_ID << endl;
-    cout << "\t◎" << "[座位位置💺] " << ticket.seatLocation.row + 1 << "行" << ticket.seatLocation.col + 1 << "列"
+    cout << "\t◎" << "[座位位置💺] " << ticket.seatLocation.row << "行" << ticket.seatLocation.col << "列"
          << endl;
     cout << "\t◎" << "[开始时间🕓] ";
     ticket.begin_time.print_date();
@@ -141,9 +141,9 @@ void User::Buy_Ticket() {
         cout << "选择的位置不合法！请重新选择（行 列）：";
         goto reselect_seat;
     }
-    seatLocation.row--;
-    seatLocation.col--;
-    if (arrangements[choice].hall.seats[seatLocation.row][seatLocation.col]) {
+//    seatLocation.row--;
+//    seatLocation.col--;
+    if (arrangements[choice].hall.seats[seatLocation.row-1][seatLocation.col-1]) {
         cout << "该座位已被购买！请重新选择（行 列）：";
         goto reselect_seat;
     }
@@ -168,7 +168,7 @@ void User::Return_Ticket() {
     }
     string file_path = (string) seats_folder + "/" + to_string(choice) + ".bin";
     Seats seats = load_seats(file_path);
-    seats[tickets[choice].seatLocation.row][tickets[choice].seatLocation.col] = false;
+    seats[tickets[choice].seatLocation.row-1][tickets[choice].seatLocation.col-1] = false;
     save_seats(seats, file_path);
     tickets.erase(tickets.begin() + choice);
     cout << "退票成功！" << endl;
@@ -278,13 +278,13 @@ void User::main() {
             else if (user_Choice_menu == 3) {
                 user.Return_Ticket();
                 goto menu;
-            } else if (user_Choice_menu == 0) {
+            } else if (user_Choice_menu == 4) {
                 cout << "欢迎下次使用！" << endl;
                 ::exit(2);
             } else break;
         }
         default:
-            cerr << "请输入1或2！" << endl;
+            cerr << "请输入1~4！" << endl;
             goto re_choose_main;
     }
 }

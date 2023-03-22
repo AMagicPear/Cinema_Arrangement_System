@@ -20,7 +20,7 @@ using namespace std;
 using json = nlohmann::json;
 #define fs std::filesystem
 //基本信息初始化
-#define HALL_NUM 5
+#define HALL_NUM 6
 #define films_json "data/films.json"
 #define arrangements_json "data/arrangements.json"
 #define seats_folder "data/halls"
@@ -82,7 +82,8 @@ Hall hall_default[HALL_NUM] = {{1, create_hall(8, 15)},
                                {2, create_hall(12, 25)},
                                {3, create_hall(7, 15)},
                                {4, create_hall(16, 32)},
-                               {5, create_hall(10, 24)}};
+                               {5, create_hall(10, 24)},
+                               {6, create_hall(8,8)}};
 
 //一部电影
 class Film {
@@ -258,7 +259,7 @@ public:
 
     //传入排片来购票，同时会修改排片的座位表
     Ticket(Arrangement &ar_set, SeatLocation seat_set) {
-        ar_set.hall.seats[seat_set.row][seat_set.col] = true;
+        ar_set.hall.seats[seat_set.row-1][seat_set.col-1] = true;
         film = ar_set.film;
         begin_time = ar_set.begin_time;
         seatLocation = seat_set;
@@ -445,11 +446,11 @@ void rewind_arrangements(){
     for (int i=0;i< size(arrangements);++i) {
         if(arrangements[i].begin_time-t0<0){
             ar_old.push_back(arrangements[i]);
-            save_arrangements_json(ar_old,ar_old_json);
             arrangements.erase(arrangements.begin()+i);
-            save_arrangements(arrangements);
         }
     }
+    save_arrangements_json(ar_old,ar_old_json);
+    save_arrangements(arrangements);
 }
 
 //输出一个vector<Arrangement>内的所有排片
