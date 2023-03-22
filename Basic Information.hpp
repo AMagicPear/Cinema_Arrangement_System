@@ -26,33 +26,38 @@ using json = nlohmann::json;
 #define seats_folder "data/halls"
 #define user_folder "/Users/amagicpear/Library/CloudStorage/OneDrive-njupt.edu.cn/CLionProjects/CinemaCpp/cmake-build-debug/data/users"
 #define user_info "data/users/userinfo.txt"
+#define ar_old_json "data/arrangements_old.json"
 using namespace std;
 
 // 定义Hall类型为bool类型的二维vector表示座位表
 typedef vector<vector<bool>> Seats;
 
 // 定义一个打印Hall座位表的函数
-void show_seats(const Seats &hall) {
+void show_seats(const Seats &seats) {
     cout << "----------" << endl;
-    // 遍历每一行
-    for (const auto &row: hall) {
-        // 遍历每一列
-        for (const auto &seat: row) {
-            // 如果座位为true，打印'▣'
-            if (seat) {
-                cout << "▣";
-            }
-                // 否则，打印'□'
-            else {
-                cout << "□";
-            }
+    //输出的第一行
+    cout<<"  ";
+    int tab=(seats[0].size()/2-3)*2;
+    for (int i = 0; i < tab; ++i)
+        cout<<" ";
+    cout<<"荧  幕"<<endl;
+    //输出的第二行
+    cout<<"  ";
+    for (int i = 0; i < seats[0].size(); ++i) {
+        cout<<setw(2)<<i+1;
+    }
+    cout<<endl;
+    // 遍历座位表
+    for (int i = 0; i < size(seats); ++i) {
+        cout<<setw(2)<<i+1;
+        for (int j = 0; j < size(seats[i]); ++j) {
+            if (seats[i][j]) cout << "▣";
+            else cout << "□";
         }
-        // 换行
-        cout << "\n";
+        cout<<endl;
     }
     cout << "----------" << endl;
 }
-
 //定义一个影厅对象
 class Hall {
 public:
@@ -110,19 +115,6 @@ struct Date {
     int month;
     int day;
 
-    //设置Date为当前系统日期
-    void set(const string &str) {
-        if (str == "today") {
-            time_t now = time(nullptr);
-            tm *ltm = localtime(&now);
-            year = 1900 + ltm->tm_year;
-            month = 1 + ltm->tm_mon;
-            day = ltm->tm_mday;
-        } else {
-            year = 0, month = 0, day = 0;
-        }
-    }
-
     //定义一个重载运算符<的函数，用来比较两个Date对象的大小
     bool operator<(const Date &d) const {
         // 如果当前对象的年份小于d的年份，就返回true
@@ -153,12 +145,20 @@ struct Date {
         else return false;
     }
 
-
     //设置Date为自定义日期
     void set(int year_set, int month_set, int day_set) {
         year = year_set;
         month = month_set;
         day = day_set;
+    }
+
+    //设置Date为距今i天后
+    void set(int i){
+        time_t now = time(nullptr);
+        tm *ltm = localtime(&now);
+        year = 1900 + ltm->tm_year;
+        month = 1 + ltm->tm_mon;
+        day = ltm->tm_mday+i;
     }
 
     void print() const {
@@ -172,19 +172,12 @@ struct Date {
         month = m;
         day = d;
     }
-
-    Date(const string &str) {
-        if (str == "today") {
-            time_t now = time(nullptr);
-            tm *ltm = localtime(&now);
-            year = 1900 + ltm->tm_year;
-            month = 1 + ltm->tm_mon;
-            day = ltm->tm_mday;
-        } else {
-            year = 0, month = 0, day = 0;
-        }
-    }
 };
+// 判断某一年是否是闰年
+bool is_Run(int year){
+    if ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0) return true;
+    return false;
+}
 
 struct Time {
     struct Date date;
@@ -213,8 +206,16 @@ struct Time {
         ::tm *ltm = ::localtime(&t);
         *this = {{1900 + ltm->tm_year, 1 + ltm->tm_mon, ltm->tm_mday}, ltm->tm_hour, ltm->tm_min};
     }
-};
 
+    int operator-(const Time& t) const {
+        int diff = (date.year - t.date.year) * (is_Run(date.year)?366:365) * 24 * 60;
+        diff += (date.month - t.date.month) * 30 * 24 * 60;
+        diff += (date.day - t.date.day) * 24 * 60;
+        diff += (hour - t.hour) * 60;
+        diff += (minute - t.minute);
+        return diff;
+    }
+};
 //一次排片
 class Arrangement {
 public:
@@ -401,6 +402,7 @@ Arrangements load_arrangements(const string &file_dst, const std::string &folder
     vector<Arrangement> arrangements;
     //从json中读取管理员排片的基本信息
     ifstream file(file_dst);
+    if(!file) return {};
     json json;
     file >> json;
     for (const auto &i: json) {
@@ -412,9 +414,11 @@ Arrangements load_arrangements(const string &file_dst, const std::string &folder
     }
     file.close();
     //从二进制文件内读取各个排片的座位表信息
-    for (int i = 0; i < size(arrangements); ++i) {
-        string file_path = folder_path + "/" + to_string(i) + ".bin";
-        arrangements[i].hall.seats = load_seats(file_path);
+    if (!folder_path.empty()) {
+        for (int i = 0; i < size(arrangements); ++i) {
+            string file_path = folder_path + "/" + to_string(i) + ".bin";
+            arrangements[i].hall.seats = load_seats(file_path);
+        }
     }
     return arrangements;
 }
@@ -433,31 +437,34 @@ Films load_films(const string &file_dst) {
     return films;
 }
 
+// 滤过过去的排片并保存在另一个文件中
+void rewind_arrangements(){
+    Arrangements arrangements=load_arrangements(arrangements_json,seats_folder);
+    Time t0(0);
+    Arrangements ar_old= load_arrangements(ar_old_json,"");
+    for (int i=0;i< size(arrangements);++i) {
+        if(arrangements[i].begin_time-t0<0){
+            ar_old.push_back(arrangements[i]);
+            save_arrangements_json(ar_old,ar_old_json);
+            arrangements.erase(arrangements.begin()+i);
+            save_arrangements(arrangements);
+        }
+    }
+}
+
 //输出一个vector<Arrangement>内的所有排片
 void show_arrangements(Arrangements arrangements) {
     cout << " ====================================================================================== " << endl;
-    cout << setfill(' ') << setw(7) << setiosflags(ios::left) << "|序号"
-         << setw(27) << "|       影片名称"
-         << setw(9) << "| 类型"
-         << setw(9) << "| 时长"
-         << setw(17) << "|  放映日期" //2023/01/23
-         << setw(15) << "| 放映时间"
-         << setw(9) << "| 影厅" << "|" << endl;
-    Film film;
-    cout << setiosflags(ios::right);
+    cout<<"序号\t影片名称\t\t\t类型\t\t时长\t放映日期\t放映时间\t影厅\n";
     for (int i = 0; i < arrangements.size(); ++i) {
-        cout << setfill(' ')
-             << "|  " << i << " "
-             << "|" << setw(25) << arrangements[i].film.name
-             << "| " << arrangements[i].film.type << " "
-             << "| " << setw(3) << arrangements[i].film.time_during << " "
-             << "| ";
-        arrangements[i].begin_time.print_date();
-        cout << " "
-             << "|  ";
-        arrangements[i].begin_time.print_accurate();
-        cout << "  ";
-        cout << "|  " << arrangements[i].hall.ID << "  |" << endl;
+        Arrangement ar=arrangements[i];
+        cout<<i<<"\t\t"<<ar.film.name<<"\t\t\t"<<ar.film.type<<"\t\t"<<ar.film.time_during<<"\t\t";
+        ar.begin_time.print_date();
+        cout<<"\t";
+        ar.begin_time.print_accurate();
+        cout<<"\t\t";
+        cout<<ar.hall.ID;
+        cout<<endl;
     }
     cout << " ====================================================================================== " << endl;
 }

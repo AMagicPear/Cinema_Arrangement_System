@@ -1,5 +1,4 @@
 yoki 123
-xx 123
-1 1
-AMagicPear 1
-GGGGG 56789
+xx 20040312
+AMagicPear ampc
+yyy 123

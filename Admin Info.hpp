@@ -13,9 +13,7 @@ const std::string admin_password = "ampc";
 using namespace std;
 
 //传入vector<Film>要求用户排片并return最后的排片
-vector<Arrangement> edit_arrangements(Arrangements &arrangements, vector<Film> films) {
-//    show_films(films);
-//    vector<Arrangement> arrangements;
+vector<Arrangement> edit_arrangements(vector<Arrangement> &arrangements, vector<Film> films) {
     restart:
     int c1 = 0;
     do {
@@ -52,38 +50,26 @@ vector<Arrangement> edit_arrangements(Arrangements &arrangements, vector<Film> f
             cin >> hall_ID;
         }
         // 询问用户输入排片的开始时间
-        cout << "请输入排片的开始日期（年/月/日）：";
+        cout << "请输入排片的开始日期（可输入 tomorrow 或 年/月/日）：";
         string date_input;
+        Date date;
+        Date today(0);
+        retype_date:
         cin >> date_input;
         int year, month, day;
-        Date date;
-        /*if (date_input == "today") {
-            // 如果用户输入"today"，就用系统时间来设置年月日
-            time_t now = time(nullptr);
-            tm *ltm = localtime(&now);
-            year = 1900 + ltm->tm_year;
-            month = 1 + ltm->tm_mon;
-            day = ltm->tm_mday;
-        } else */{
+        // 如果用户输入"tomorrow"，就用明天来设置年月日
+        if (date_input == "tomorrow") {
+            date.set(1);
+        } else {
             // 如果用户输入其他字符串，就用istringstream来分割并转换为整数
             istringstream iss(date_input);
             char slash1, slash2;
             iss >> year >> slash1 >> month >> slash2 >> day;
             date.set(year, month, day);
-        }
-        // 检查用户输入的日期是否合法
-        while (year < 2023 || year > 2024 || month < 1 || month > 12 || day < 1 || day > 31) {
-            cout << "日期无效，请重新输入（年/月/日）：";
-            cin >> date_input;
-            /*if (date_input == "today") {
-                // 如果用户输入"today"，就用系统时间来设置年月日
-                date.set("today");
-            } else */{
-                // 如果用户输入其他字符串，就用istringstream来分割并转换为整数
-                istringstream iss(date_input);
-                char slash1, slash2;
-                iss >> year >> slash1 >> month >> slash2 >> day;
-                date.set(year, month, day);
+            // 检查用户输入的日期是否合法
+            if (date<today||date==today||date.month < 1 || date.month > 12 || date.day < 1 || date.day > 31) {
+                cout << "日期无效，请重新输入（年/月/日）：";
+                goto retype_date;
             }
         }
         cout << "请输入排片的开始时间（时:分）：";
@@ -95,8 +81,14 @@ vector<Arrangement> edit_arrangements(Arrangements &arrangements, vector<Film> f
             cout << "时间无效，请重新输入（时:分）：";
             cin >> hour >> colon >> minute;
         }
-        // 创建一个Time对象
         Time begin_time(date, hour, minute);
+        // 判断该时段内是否和此影厅已有的排片冲突
+        for (const auto& ar:arrangements) {
+            if(hall_ID==ar.hall.ID&&begin_time-ar.begin_time<ar.film.time_during){
+                cerr<<ar.hall.ID<<"号厅场次时间冲突！此排片无效！"<<endl;
+                goto go_on;
+            }
+        }
         // 用用户输入的信息来构造一个Arrangement对象，并把它push_back到Vector<Arrangement>中
         Arrangement arrangement(hall_ID, film_found, begin_time);
         arrangements.push_back(arrangement);
@@ -107,7 +99,9 @@ vector<Arrangement> edit_arrangements(Arrangements &arrangements, vector<Film> f
         arrangements.erase(arrangements.begin() + to_delete);
     }
     // 询问用户是否要继续更改排片
+    save_arrangements(arrangements);
     show_arrangements(arrangements);
+    go_on:
     cout << "是否要继续更改排片？（y/n）" << endl;
     char choice;
     cin >> choice;
@@ -116,8 +110,6 @@ vector<Arrangement> edit_arrangements(Arrangements &arrangements, vector<Film> f
         cin >> choice;
     }
     if (choice == 'y' || choice == 'Y') goto restart;
-//    save_halls(arrangements, seats_folder);
-//    cout<<"排片已保存！"<<endl;
     return arrangements;
 }
 
@@ -206,7 +198,7 @@ void Admin::sale() {
     cin >> choice;
     Arrangement ar = arrangements[choice];
     show_seats(ar.hall.seats);
-//管理员查看某座位的购票人信息
+    //管理员查看某座位的购票人信息
     cout << "是否要查看某座位的购票人信息？" << endl;
     int choice2;
     retype:
@@ -227,7 +219,7 @@ void Admin::sale() {
                 User user;
                 user.ID = filename.stem();
                 load_user(user);
-                for (Ticket ticket: user.tickets) {
+                for (const Ticket& ticket: user.tickets) {
                     if (ticket.film.name == ar.film.name && ticket.begin_time.date == ar.begin_time.date &&
                         ticket.begin_time.hour == ar.begin_time.hour &&
                         ticket.begin_time.minute == ar.begin_time.minute && ticket.Hall_ID == ar.hall.ID) {
@@ -238,9 +230,9 @@ void Admin::sale() {
                         }
                     } else continue;
                 }
-                cerr << "影院信息与用户信息不匹配！" << endl;
             }
         }
+        cerr << "[错误！]影院信息与用户信息不匹配！" << endl;
     } else if (choice2 == 2) return;
     else goto retype;
 }
@@ -250,6 +242,7 @@ void Admin::main() {
     int choice{};
     vector<Film> films = load_films(films_json);
     vector<Arrangement> arrangements = load_arrangements(arrangements_json, seats_folder);
+    Arrangements ar_old= load_arrangements(ar_old_json,"");
     cout << "  ====== 欢迎来到影院管理员界面 ======" << endl;
     cout << "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n";
     cout << "┃    [1] 查看&编辑当前所有电影数据   ┃\n";
@@ -272,7 +265,10 @@ void Admin::main() {
             goto re_start;
         } else if (choice == 3) {
             //进入排片系统
+            cout<<"在售的场次有："<<endl;
             show_arrangements(arrangements);
+            cout<<"已过期的场次有："<<endl;
+            show_arrangements(ar_old);
             save_arrangements(edit_arrangements(arrangements, films));
             show_arrangements(arrangements);
             goto re_start;

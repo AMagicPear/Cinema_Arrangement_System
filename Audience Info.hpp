@@ -161,6 +161,11 @@ void User::Return_Ticket() {
     cout << "请选择你要退的票的序号：";
     int choice;
     cin >> choice;
+    Time now(0);
+    if(tickets[choice].begin_time-now<=120){
+        cout<<"距影片开始前两小时起禁止退票！"<<endl;
+        return;
+    }
     string file_path = (string) seats_folder + "/" + to_string(choice) + ".bin";
     Seats seats = load_seats(file_path);
     seats[tickets[choice].seatLocation.row][tickets[choice].seatLocation.col] = false;
